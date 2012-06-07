@@ -345,6 +345,7 @@ public abstract class AbstractForumInjector extends DataInjector {
       PropertyReader reader = new PropertyReader(postNode);
       post.setId(postNode.getName());
       post.setPath(postNode.getPath());
+      post.setMessage(reader.string(Utils.EXO_MESSAGE));
       post.setName(reader.string(Utils.EXO_NAME));
       post.setNumberAttach(reader.l(Utils.EXO_NUMBER_ATTACH));
       if (post.getNumberAttach() > 0) {

@@ -63,7 +63,10 @@ public class AttachmentInjector extends AbstractForumInjector {
     int fromPost = param(params, FROM_POST);
     int toPost = param(params, TO_POST);
     int byteSize = param(params, BYTE_SIZE);
-    
+    if (byteSize < 0 || byteSize > 99) {
+      getLog().info("ByteSize is invalid with '" + byteSize + "' wrong. Please set it exactly in range 0 - 99 (words). Aborting injection ..." );
+      return;
+    }
     lorem = new LoremIpsum4J();
 
     init(null, null, null, null, postPrefix, byteSize);

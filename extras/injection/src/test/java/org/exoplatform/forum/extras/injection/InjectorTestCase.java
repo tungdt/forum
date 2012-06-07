@@ -762,7 +762,43 @@ public class InjectorTestCase extends AbstractKernelTest {
     assertEquals(4, attachmentInjector.getPostByName(postBaseName + "3").getAttachments().size());
     assertEquals(4, attachmentInjector.getPostByName(postBaseName + "4").getAttachments().size());
     
+    //invalid ByteSize out of range 0-99 = 101
+    params.clear();
+    params.put("number", "2");
+    if (postPrefix != null) {
+      params.put("postPrefix", postPrefix);
+    }
     
+    params.put("fromPost", "0");
+    params.put("toPost", "4");
+    params.put("byteSize", "101");
+    
+    attachmentInjector.inject(params);
+    
+    assertEquals(4, attachmentInjector.getPostByName(postBaseName + "0").getAttachments().size());
+    assertEquals(4, attachmentInjector.getPostByName(postBaseName + "1").getAttachments().size());
+    assertEquals(4, attachmentInjector.getPostByName(postBaseName + "2").getAttachments().size());
+    assertEquals(4, attachmentInjector.getPostByName(postBaseName + "3").getAttachments().size());
+    assertEquals(4, attachmentInjector.getPostByName(postBaseName + "4").getAttachments().size());
+    
+    //invalid ByteSize out of range 0-99 = -1
+    params.clear();
+    params.put("number", "2");
+    if (postPrefix != null) {
+      params.put("postPrefix", postPrefix);
+    }
+    
+    params.put("fromPost", "0");
+    params.put("toPost", "4");
+    params.put("byteSize", "-1");
+    
+    attachmentInjector.inject(params);
+    
+    assertEquals(4, attachmentInjector.getPostByName(postBaseName + "0").getAttachments().size());
+    assertEquals(4, attachmentInjector.getPostByName(postBaseName + "1").getAttachments().size());
+    assertEquals(4, attachmentInjector.getPostByName(postBaseName + "2").getAttachments().size());
+    assertEquals(4, attachmentInjector.getPostByName(postBaseName + "3").getAttachments().size());
+    assertEquals(4, attachmentInjector.getPostByName(postBaseName + "4").getAttachments().size());
     
     //
     cleanForum(forumBaseName, 1);
