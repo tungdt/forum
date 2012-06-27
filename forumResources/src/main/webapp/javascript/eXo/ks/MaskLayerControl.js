@@ -5,7 +5,7 @@
 /*
 eXo.core.UIMaskLayer.createMask = function(blockContainerId, object, opacity, position) {
 	try {
-		var Browser = eXo.core.Browser ;
+		var Browser = eXo.ks.Browser ;
 		var blockContainer = document.getElementById(blockContainerId) ;
 		var maskLayer = document.createElement("div") ;
 		
@@ -124,7 +124,7 @@ MaskLayerControl.prototype.scrollHandler = function() {
 } ;
 
 MaskLayerControl.prototype.hidePicture = function() {
-  eXo.core.Browser.onScrollCallback.remove('MaskLayerControl') ;
+  eXo.ks.Browser.onScrollCallback.remove('MaskLayerControl') ;
   var maskContent = eXo.core.UIMaskLayer.object ;
   var maskNode = document.getElementById("MaskLayer") || document.getElementById("subMaskLayer") ;
   if (maskContent) maskContent.parentNode.removeChild(maskContent) ;
