@@ -2,8 +2,6 @@ if(!eXo.answer){
 	eXo.answer = {} ;
 }
 
-eXo.require("eXo.ks.Browser"); 
-
 function UIAnswersPortlet() {
   this.viewImage = true;
   this.scrollManagerLoaded = false;
@@ -19,6 +17,18 @@ UIAnswersPortlet.prototype.init = function (portletId) {
     eXo.answer.UIAnswersPortlet.updateContainersHeight(portlet);
     eXo.answer.UIAnswersPortlet.controlWorkSpace();
     eXo.answer.UIAnswersPortlet.disableContextMenu(portlet);
+  }
+};
+
+UIAnswersPortlet.prototype.updateContainersHeight = function (elm) {
+  if(elm) {
+    var ansCt = eXo.core.DOMUtil.findFirstDescendantByClass(elm, "div", "CategoriesContainer");
+    if (ansCt) {
+      var ansVCt = eXo.core.DOMUtil.findFirstDescendantByClass(elm, "div", "ViewQuestionContent");
+      if(ansVCt) {
+         ansCt.style.height = (ansVCt.offsetHeight - 67) + "px";
+      }
+    }
   }
 };
 
@@ -204,7 +214,7 @@ UIAnswersPortlet.prototype.showFullScreen = function (imageNode, containerNode) 
 
 UIAnswersPortlet.prototype.showMenu = function (obj, evt) {
   var menu = eXo.core.DOMUtil.findFirstDescendantByClass(obj, "div", "UIRightClickPopupMenu");
-  eXo.webui.UIPopupSelectCategory.show(obj, evt);
+  eXo.ks.UIPopupSelectCategory.show(obj, evt);
   var top = menu.offsetHeight;
   menu.style.top = -(top + 20) + "px";
 };

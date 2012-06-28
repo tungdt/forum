@@ -18,6 +18,7 @@
 	jsmanager.addOnResizeJavascript('function(){eXo.ks.KSUtils.setMaskLayer("'+uicomponent.id+'");}');
 	UserProfile userProfile = uicomponent.getUserProfile() ;
 	if(userProfile.getUserRole() <= 2){
+		jsmanager.loadScriptResource("ForumSendNotification");
 		jsmanager.addJavascript('eXo.forum.ForumSendNotification.init("'+userProfile.getUserId()+'","'+uicomponent.getUserToken()+'","'+uicomponent.getCometdContextName()+'");') ;
 	}
 	jsmanager.addJavascript('eXo.forum.UIForumPortlet.init("'+uicomponent.id+'");') ;

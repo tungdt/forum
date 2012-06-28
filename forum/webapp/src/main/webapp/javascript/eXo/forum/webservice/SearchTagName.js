@@ -2,6 +2,11 @@
  * Search Ip Ban using REST service
  * 
  */
+
+if (!eXo.forum) {
+	 eXo.forum = {};
+}
+
 function AjaxHandler(callbackObject, action) {
   this.LOADING_STATE = 'LOADING';
   this.SUCCESS_STATE = 'SUCCESS';

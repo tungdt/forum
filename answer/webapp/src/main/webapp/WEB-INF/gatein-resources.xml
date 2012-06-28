@@ -28,6 +28,9 @@
 				<path>/javascript/eXo/faq/UIFaqPortlet.js</path>
 			</script>
 			<depends>
+				<module>KSUtils</module>
+			</depends>
+			<depends>
 				<module>base</module>
 			</depends>
 		</module>

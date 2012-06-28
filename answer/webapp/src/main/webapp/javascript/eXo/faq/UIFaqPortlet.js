@@ -66,16 +66,4 @@ UIFAQPortlet.prototype.treeView = function (id) {
   }
 };
 
-UIFAQPortlet.prototype.updateContainersHeight = function (elm) {
-  if(elm) {
-    var ansCt = eXo.core.DOMUtil.findFirstDescendantByClass(elm, "div", "CategoriesContainer");
-    if (ansCt) {
-      var ansVCt = eXo.core.DOMUtil.findFirstDescendantByClass(elm, "div", "ViewQuestionContent");
-      if(ansVCt) {
-         ansCt.style.height = (ansVCt.offsetHeight - 67) + "px";
-      }
-    }
-  }
-};
-
 eXo.faq.UIFaqPortlet = new UIFaqPortlet();

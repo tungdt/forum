@@ -34,30 +34,22 @@
   <portlet>
     <name>ForumPortlet</name>
     <module>
-      <script>
-        <name>eXo.forum.UIForumPortlet</name>
-        <path>/javascript/eXo/forum/UIForumPortlet.js</path>
-      </script>
       <depends>
-        <module>SearchTagName</module>
-      </depends>
-      <depends>
-        <module>ForumSendNotification</module>
-      </depends>
-      <depends>
-        <module>webui</module>
-      </depends>
-      <depends>
-        <module>webui-ext</module>
-      </depends>
-      <depends>
-        <module>cometd</module>
-      </depends>
-      <depends>
-        <module>forumResources</module>
+        <module>forumPortlet</module>
       </depends>
     </module>
   </portlet>
+
+  <module>
+    <name>forumPortlet</name>
+    <script>
+      <name>eXo.forum.UIForumPortlet</name>
+      <path>/javascript/eXo/forum/UIForumPortlet.js</path>
+    </script>
+    <depends>
+      <module>forumResources</module>
+    </depends>
+  </module>
 
   <module>
     <name>SearchTagName</name>
@@ -65,6 +57,9 @@
       <name>eXo.forum.webservice.SearchTagName</name>
       <path>/javascript/eXo/forum/webservice/SearchTagName.js</path>
     </script>
+    <depends>
+      <module>KSUtils</module>
+    </depends>
   </module>
   
   <module>
@@ -74,29 +69,35 @@
        <path>/javascript/eXo/forum/ForumSendNotification.js</path>
      </script>
     <depends>
+      <module>KSUtils</module>
+    </depends>
+    <depends>
       <module>cometd</module>
     </depends>
   </module>
 
   <module>
-    <name>forumTotalJob</name>
+    <name>ForumTotalJob</name>
     <script>
       <name>eXo.forum.ForumTotalJob</name>
       <path>/javascript/eXo/forum/ForumTotalJob.js</path>
     </script>
     <depends>
+      <module>KSUtils</module>
+    </depends>
+    <depends>
       <module>cometd</module>
     </depends>
   </module>
 
   <module>
-    <name>searchIpBan</name>
+    <name>SearchIpBan</name>
     <script>
       <name>eXo.forum.webservice.SearchIpBan</name>
       <path>/javascript/eXo/forum/webservice/SearchIpBan.js</path>
     </script>
     <depends>
-			<module>DOMUtil</module>
+			<module>KSUtils</module>
 		</depends>
     <depends>
       <module>base</module>

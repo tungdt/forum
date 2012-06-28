@@ -36,20 +36,21 @@
   <portlet>
     <name>PollPortlet</name>
     <module>
-      <script>
-        <name>eXo.poll.UIPollPortlet</name>
-        <path>/javascript/eXo/poll/UIPollPortlet.js</path>
-      </script>
       <depends>
-        <module>webui</module>
-      </depends>
-      <depends>
-        <module>webui-ext</module>
-      </depends>
-      <depends>
-        <module>forumResources</module>
+        <module>pollPortlet</module>
       </depends>
     </module>
   </portlet>
-  
+
+ 	<module>
+ 		<name>pollPortlet</name>
+    <script>
+      <name>eXo.poll.UIPollPortlet</name>
+      <path>/javascript/eXo/poll/UIPollPortlet.js</path>
+    </script>
+    <depends>
+      <module>forumResources</module>
+    </depends>
+  </module>
+
 </gatein-resources>

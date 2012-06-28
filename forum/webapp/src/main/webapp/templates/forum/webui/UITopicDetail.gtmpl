@@ -19,8 +19,10 @@
   def rcontext = _ctx.getRequestContext() ;
   JavascriptManager jsmanager = rcontext.getJavascriptManager();
 
-  jsmanager.addJavascript('eXo.forum.webservice.SearchTagName.init();') ;
   jsmanager.loadScriptResource("forumResources-syntaxhighlighter");
+  jsmanager.loadScriptResource("SearchTagName");
+
+  jsmanager.addJavascript('eXo.forum.webservice.SearchTagName.init();') ;
 
   jsmanager.addOnResizeJavascript('eXo.forum.UIForumPortlet.reSizeImages');
   jsmanager.addJavascript("eXo.forum.UIForumPortlet.controlWorkSpace();");
@@ -120,7 +122,7 @@
             <span class="UntagIcon FL" title="Untag this topic." onclick="<%=uicomponent.event("UnTagTopic", tag.getId());%>"></span>
           </li>
         <%} %>
-          <li class="ScrollButtons" onclick="eXo.webui.UIPopupSelectCategory.show(this, event);">
+          <li class="ScrollButtons" onclick="eXo.ks.UIPopupSelectCategory.show(this, event);">
                   <% /*Begin Popup Menu*/ %>
             <div class="UIPopupCategory" style="display: none;">
               <ul class="UIRightClickPopupMenu UIRightPopupMenuContainer MenuTagContainer" style="display:block;">
@@ -150,7 +152,7 @@
   <div class="PostsInThreadContainer ImageContentContainer">
     <div class="ForumToolbar ForumActionToolbar ToolbarActionsContainer ClearFix">
             <% if(isShowMenu && canEdit) { %> 
-              <div class="ContentAction DefaultStyle" onclick="eXo.webui.UIPopupSelectCategory.show(this, event);">
+              <div class="ContentAction DefaultStyle" onclick="eXo.ks.UIPopupSelectCategory.show(this, event);">
                     <div class="StatusIcon ModerationIcon">
                       <a class="DownArrow1Icon"><%=_ctx.appRes("UITopicDetail.label.Moderation");%></a>
                     </div>
@@ -220,7 +222,7 @@
                 <% /*End Popup Menu*/ %>
               </div>
             <% if((canEdit && isShowMenu) || isUserCreatedTopic) { %> 
-              <div class="ContentAction DefaultStyle ForumSeparatorLine" onclick="eXo.webui.UIPopupSelectCategory.show(this, event);">                
+              <div class="ContentAction DefaultStyle ForumSeparatorLine" onclick="eXo.ks.UIPopupSelectCategory.show(this, event);">                
                   <div class="StatusIcon ToolIcon">
                     <a class="DownArrow1Icon"><%=_ctx.appRes("UITopicDetail.label.ThreadTools");%></a>
                   </div>

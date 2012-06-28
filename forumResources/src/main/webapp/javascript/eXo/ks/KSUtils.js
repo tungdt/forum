@@ -15,7 +15,7 @@ KSUtils.prototype.findFirstDescendantByClass = function(parent, classChild) {
 
 KSUtils.prototype.findDescendantsByClass = function(parent, classChild) {
 	var allchildrents = [];
-	var elements = root.getElementsByTagName("*");
+	var elements = parent.getElementsByTagName("*");
 	var i = elements.length;
 	var DOMUtil = eXo.core.DOMUtil;
 	while (i--) {
@@ -102,7 +102,7 @@ KSUtils.prototype.showUserMenu = function(obj, event) {
 		return;
 	var uiPopup = KSUtils.findFirstDescendantByClass(uiPopupCategory, "UIPopupInfoContent");
 	uiPopup.onclick = KSUtils.cancel;
-	eXo.webui.UIPopupSelectCategory.hide();
+	eXo.ks.UIPopupSelectCategory.hide();
 	uiPopupCategory.style.visibility = "inherit";
 	uiPopupCategory.style.display = "inline";
 	if (KSUtils.isChrome()) {

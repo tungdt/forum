@@ -22,26 +22,17 @@
 		</depends>
 	</module>
 
-	<module>
-		<name>forumResources</name>
-		<script>
-			<name>eXo.ks.KSUtils</name>
-			<path>/javascript/eXo/ks/KSUtils.js</path>
-		</script>
-		<depends>
-			<module>Keyboard</module>
-		</depends>
-		<depends>
-			<module>maskLayerControl</module>
-		</depends>
-		<depends>
-			<module>DOMUtil</module>
-		</depends>
-		<depends>
-			<module>base</module>
-		</depends>
-	</module>
-	
+  <module>
+    <name>KSBrowser</name>
+    <script>
+      <name>eXo.ks.Browser</name>
+      <path>/javascript/eXo/ks/Browser.js</path>
+    </script>
+    <depends>
+      <module>webui</module>
+    </depends>
+  </module>
+
 	<module>
 		<name>Keyboard</name>
 		<script>
@@ -49,11 +40,11 @@
 			<path>/javascript/eXo/core/Keyboard.js</path>
 		</script>
 		<depends>
-			<module>base</module>
+			<module>KSBrowser</module>
 		</depends>
 	</module>
-
-	<module>
+  
+  <module>
 		<name>maskLayerControl</name>
 		<script>
 			<name>eXo.ks.MaskLayerControl</name>
@@ -61,6 +52,90 @@
 		</script>
 		<depends>
 			<module>DOMUtil</module>
+		</depends>
+	</module>
+
+	<module>
+		<name>forumResources</name>
+		<depends>
+			<module>KSPopupSelectCategory</module>
+		</depends>
+		<depends>
+			<module>maskLayerControl</module>
+		</depends>
+		<depends>
+			<module>KSUtils</module>
+		</depends>
+		<depends>
+			<module>Keyboard</module>
+		</depends>
+		<depends>
+			<module>KSBrowser</module>
+		</depends>
+		<depends>
+			<module>DOMUtil</module>
+		</depends>
+		<depends>
+			<module>base</module>
+		</depends>
+    <depends>
+      <module>webui</module>
+    </depends>
+    <depends>
+      <module>webui-ext</module>
+    </depends>
+	</module>
+	
+	<module>
+		<name>KSPopupSelectCategory</name>
+		<script>
+			<name>eXo.ks.UIPopupSelectCategory</name>
+			<path>/javascript/eXo/ks/UIPopupSelectCategory.js</path>
+		</script>
+		<depends>
+			<module>DOMUtil</module>
+		</depends>
+	</module>
+
+	<module>
+		<name>KSUtils</name>
+		<script>
+			<name>eXo.ks.KSUtils</name>
+			<path>/javascript/eXo/ks/KSUtils.js</path>
+		</script>
+		<depends>
+			<module>DOMUtil</module>
+		</depends>
+		<depends>
+			<module>base</module>
+		</depends>
+	</module>
+
+	<module>
+		<name>cometd</name>
+		<script>
+			<name>eXo.core.Cometd</name>
+			<path>/javascript/eXo/core/Cometd.js</path>
+		</script>
+		<depends>
+			<module>KSBrowser</module>
+		</depends>
+		<depends>
+			<module>JSON</module>
+		</depends>
+		<depends>
+			<module>base</module>
+		</depends>
+	</module>
+
+	<module>
+		<name>JSON</name>
+		<script>
+			<name>eXo.core.JSON</name>
+			<path>/javascript/eXo/core/JSON.js</path>
+		</script>
+		<depends>
+			<module>base</module>
 		</depends>
 	</module>
 
@@ -84,34 +159,17 @@
 			<name>eXo.ks.UIDateTimePicker</name>
 			<path>/javascript/eXo/ks/UIDateTimePicker.js</path>
 		</script>
-		<depends>
+    <depends>
 			<module>DOMUtil</module>
 		</depends>
 		<depends>
-			<module>Browser</module>
+			<module>KSBrowser</module>
 		</depends>
 		<depends>
 			<module>base</module>
 		</depends>
 	</module>
-
-  <!-- Remove this configuration after Cometd change configuration -->
-  <module>
-    <name>cometd</name>
-    <script>
-      <name>eXo.core.Cometd</name>
-      <path>../cometd/javascript/eXo/core/Cometd.js</path>
-    </script>
-  </module>
-
-  <module>
-    <name>Browser</name>
-    <script>
-      <name>eXo.ks.Browser</name>
-      <path>/javascript/eXo/ks/Browser.js</path>
-    </script>
-  </module>
-
+  
 	<module>
 		<name>forumResources-syntaxhighlighter</name>
 		<script>

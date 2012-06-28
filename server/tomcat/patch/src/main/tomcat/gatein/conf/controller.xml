@@ -141,7 +141,6 @@
     </route-param>
   </route> 
 
-
 <!-- Script handler -->
   <route path="/scripts/{gtn:version}/{gtn:scope}/">
     <route-param qname="gtn:handler">
