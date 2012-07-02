@@ -125,7 +125,7 @@
 
 /**************************** UIForumPortlet ForumToolBar *********************************/
 .UIForumPortlet .NormalButtomBT {
-	background: url('background/buttons/NormalButtonForum.png') repeat-x top;
+	background: url('background/buttons/NormalButtonForum.gif') repeat-x top;
 	padding: 0px 5px;
 	border-radius: 10px;
 	border: 1px solid #acacac;
