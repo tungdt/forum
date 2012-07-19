@@ -81,13 +81,14 @@
     },
     
     // show users menu
-    showUserMenu : function(obj, event) {
-      var event = event || window.event;
+    showUserMenu : function(obj, evt) {
+      var event = evt || window.event;
       var jobj = $(obj);
       var jPopup = jobj.find(".UIPopupInfoMenu");
       if (!jPopup.exists()) {
         return;
       }
+      jobj.find('a:first').css('position', 'relative');
       var uiPopup = jPopup.find(".UIPopupInfoContent");
       uiPopup.on('click', ForumUtils.cancelEvent);
       ForumUtils.hideElements();

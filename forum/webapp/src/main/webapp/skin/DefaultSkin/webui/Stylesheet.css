@@ -50,7 +50,13 @@
 
 .UIForumPortlet .UIRightClickPopupMenu .MenuItem {
 	padding: 0px 10px;
-	min-width: 100px;
+	height: auto;
+}
+
+.UIForumPortlet .UIRightClickPopupMenu .MenuItem .ItemIcon {
+  padding: 0px;
+  padding-left: 26px;
+  line-height: 25px;
 }
 
 .UIForumPortlet .UIRightClickPopupMenu .MenuItem:hover {
@@ -268,33 +274,6 @@
 	margin: 0px;
 }
 
-.UIForumPortlet .textAreaMultil {
-	font-size: 11px;
-	height: 70px;
-	width: 232px;
-}
-
-.UIForumPortlet .TextAreaMultil .UIPopupCategory {
-	top: 18px;
-	left: 15px;
-}
-
-.UIForumPortlet .TextAreaMultil .UIRightClickPopupMenu .ItemIcon {
-	padding: 3px 0px 3px 10px;
-}
-
-.UIForumPortlet .TextAreaMultil .UIRightClickPopupMenu .MenuItem {
-	width: 175px;
-	max-height: 120px;
-	overflow-x: hidden;
-}
-
-.UIForumPortlet .TextAreaMultil .UIRightClickPopupMenu .MenuItems {
-	max-height: 120px;
-	overflow-y: auto;
-	width: 194px;
-}
-
 .UIForumPortlet .UISplitTopicForm .label {
 	line-height: 20px;
 	padding-right: 10px;
@@ -321,8 +300,7 @@
 	padding: 0px;
 }
 
-.UIForumPortlet .UIGroupMembershipSelector .UIBreadcumbs .BreadcumbsInfoBar
-	{
+.UIForumPortlet .UIGroupMembershipSelector .UIBreadcumbs .BreadcumbsInfoBar {
 	float: none;
 }
 
@@ -400,10 +378,6 @@
 	white-space: nowrap;
 	display: block;
 	color: gray;
-}
-
-.UIRightClickPopupMenu .DisableMenuItem:hover .ItemIcon {
-	
 }
 
 .UIForumPortlet .UIForm .UIFormGrid td.FieldComponent {
