@@ -43,10 +43,11 @@
       return null;
     },
     setPosition : function(context, jobj, evt) {
-      var evt = evt || window.event;
+      evt = evt || window.event;
+      var event = $.event.fix(evt);
       var Browser = eXo.core.Browser;
-      var X = Browser.findMouseRelativeX(context, evt, false) || 2;
-      var Y = Browser.findMouseRelativeY(context, evt) + 6 || 2;
+      var X = Browser.findMouseRelativeX(context, event, false) || 2;
+      var Y = Browser.findMouseRelativeY(context, event) + 6 || 2;
       jobj.css('position', 'absolute').show();
       jobj.css('left', X + 'px');
       jobj.css('top', Y + 'px');

@@ -4,8 +4,8 @@
     buttons : null,
     contents : null,
     init : function() {
-      Tour.buttons = gj('#UIKSGuidedTour li.Button');
-      Tour.contents = gj('#UIKSGuidedTour div.ContentTour');
+      Tour.buttons = $('#UIKSGuidedTour li.Button');
+      Tour.contents = $('#UIKSGuidedTour div.ContentTour');
       Tour.buttons.on('click', Tour.click);
       Tour.buttons.on('mouseover', Tour.over);
       Tour.buttons.on('mouseout', Tour.out);
