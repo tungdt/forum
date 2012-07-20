@@ -83,6 +83,7 @@
     // show users menu
     showUserMenu : function(obj, evt) {
       var event = evt || window.event;
+      event = gj.event.fix(event);
       var jobj = $(obj);
       var jPopup = jobj.find(".UIPopupInfoMenu");
       if (!jPopup.exists()) {
