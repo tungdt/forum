@@ -32,7 +32,7 @@
   };
   
   UIAnswersPortlet.prototype.disableContextMenu = function (id) {
-    var oncontextmenus = findId(id + ' .oncontextmenu');
+    var oncontextmenus = findId(id + ' .disableContextMenu');
     for (var i = 0; i < oncontextmenus.length; i++) {
       oncontextmenus.eq(i).on('contextmenu', function() {
         return false;
@@ -234,17 +234,17 @@
     var contextAnchors = rootNode.find('div[onmousedown]');
     i = contextAnchors.length;
     while (i--) {
-      contextAnchors.eq(i).removeAttr('onmousedown');
-      contextAnchors.eq(i).removeAttr('onkeydown');
+      contextAnchors.eq(i).attr('onmousedown', null);
+      contextAnchors.eq(i).attr('onkeydown', null);
     }
     
     contextAnchors = rootNode.find('div[onmouseover]');
     i = contextAnchors.length;
     while (i--) {
-      contextAnchors.eq(i).removeAttr('onmouseover');
-      contextAnchors.eq(i).removeAttr('onmouseout');
-      contextAnchors.eq(i).removeAttr('onfocus');
-      contextAnchors.eq(i).removeAttr('onblur');
+      contextAnchors.eq(i).attr('onmouseover', null);
+      contextAnchors.eq(i).attr('onmouseout', null);
+      contextAnchors.eq(i).attr('onfocus', null);
+      contextAnchors.eq(i).attr('onblur', null);
     }
   
     contextAnchors = rootNode.find('div[onclick]');
@@ -302,15 +302,15 @@
     if (container.exists() && controlButtonContainer.exists()) {
       uiNav.scrollMgr[scrollname] = new ScrollManager(scrollname);
       uiNav.scrollMgr[scrollname].initFunction = callback;
-      uiNav.scrollMgr[scrollname].mainContainer = controlButtonContainer[0];
+      uiNav.scrollMgr[scrollname].mainContainer = controlButtonContainer.eq(0);
       uiNav.scrollMgr[scrollname].answerLoadItems('ControlButton');
       if (uiNav.scrollMgr[scrollname].elements.length <= 0) return;
-      uiNav.scrollMgr[scrollname].arrowsContainer = controlButtonContainer.find('div.ScrollButtons:first')[0];
+      uiNav.scrollMgr[scrollname].arrowsContainer = controlButtonContainer.find('div.ScrollButtons:first').eq(0);
       var button = $(uiNav.scrollMgr[scrollname].arrowsContainer).find('div:first');
 
       if (button.length >= 2) {
-        uiNav.scrollMgr[scrollname].initArrowButton(button[0], "left", "ScrollLeftButton", "HighlightScrollLeftButton", "DisableScrollLeftButton");
-        uiNav.scrollMgr[scrollname].initArrowButton(button[1], "right", "ScrollRightButton", "HighlightScrollRightButton", "DisableScrollRightButton");
+        uiNav.scrollMgr[scrollname].initArrowButton(button.eq(0), "left", "ScrollLeftButton", "HighlightScrollLeftButton", "DisableScrollLeftButton");
+        uiNav.scrollMgr[scrollname].initArrowButton(button.eq(1), "right", "ScrollRightButton", "HighlightScrollRightButton", "DisableScrollRightButton");
       }
 
       uiNav.scrollMgr[scrollname].callback = uiNav.scrollCallback;
@@ -389,12 +389,12 @@
       this.disableContextMenu(id);
       var uiContextMenu = eXo.forum.UIContextMenu;
       if (!uiContextMenu.classNames) {
-        uiContextMenu.classNames = new Array("FAQCategory", "QuestionContextMenu");
-      } else {
-        uiContextMenu.classNames.push("FAQCategory");
+        uiContextMenu.classNames = new Array("oncontextmenu", "QuestionContextMenu");
+    } else {
+        uiContextMenu.classNames.push("oncontextmenu");
         uiContextMenu.classNames.push("QuestionContextMenu");
       }
-      uiContextMenu.setContainer(cont[0]);
+      uiContextMenu.setContainer(cont.eq(0));
       uiContextMenu.setup();
     }
   };
@@ -438,14 +438,14 @@
     var nodeSize = nodes.length;
     var childrenContainer = null;
     for (var i = 0; i < nodeSize; i++) {
-      childrenContainer = nodes.eq(i).find('div.ChildNodeContainer:first');
-      if (nodes[i] === selectedNode) {
+      childrenContainer = $(nodes.eq(i)).find('div.ChildNodeContainer:first');
+      if (nodes.eq(i) === selectedNode) {
         childrenContainer.css('display', 'block');
-        nodes.eq(i).attr('class', 'Node SmallGrayPlus');
+        $(nodes.eq(i)).attr('class', 'Node SmallGrayPlus');
       } else {
         childrenContainer.css('display', 'none');
-        if (nodes.eq(i).attr('class') === "Node SmallGrayPlus false") continue;
-        nodes.eq(i).attr('class', 'Node SmallGrayMinus');
+        if ($(nodes.eq(i)).attr('class') === "Node SmallGrayPlus false") continue;
+        $(nodes.eq(i)).attr('class', 'Node SmallGrayMinus');
       }
     }
   };
@@ -458,7 +458,7 @@
     var key = eXo.forum.ForumUtils.getKeynum(event);
     if (key == 13) {
       $(this).find('div.ActionSearch:first').click();
-      eXo.forum.ForumUtils.cancelEvent(event);
+      eXo.core.EventManager.cancelEvent(event);
       return false;
     }
   };

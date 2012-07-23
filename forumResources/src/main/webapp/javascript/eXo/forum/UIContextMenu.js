@@ -56,14 +56,18 @@
       eXo.forum.ForumUtils.hideElements();
       var context = $(this);
       var jmenu = UIContextMenu.getMenu(context, evt);
-      if (!jmenu.exists()) {
-        return;
+      if (jmenu && jmenu.exists()) {
+        var parent = context.parents('.PORTLET-FRAGMENT');
+        if(parent.exists()) {
+          parent.css('position', 'relative');
+        } else {
+          parent = context;
+          parent.parent.css('position', 'relative');
+        }
+        UIContextMenu.setPosition(parent, jmenu, evt);
+        eXo.forum.ForumUtils.addhideElement(jmenu);
+        eXo.forum.ForumUtils.cancelEvent(evt);
       }
-      context.parent().css('position', 'relative');
-      UIContextMenu.setPosition(context, jmenu, evt);
-      eXo.forum.ForumUtils.addhideElement(jmenu);
-      eXo.forum.ForumUtils.cancelEvent(evt);
-      return false;
     }
   };
   
