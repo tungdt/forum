@@ -13,6 +13,7 @@
   JavascriptManager jsmanager = rcontext.getJavascriptManager();
   jsmanager.addJavascript('eXo.answer.UIAnswersPortlet.initContextMenu("'+compId+'") ;') ;
   jsmanager.addJavascript("eXo.answer.UIAnswersPortlet.checkCustomView('" + uicomponent.isNotInSpace() + "', '" + _ctx.appRes("UIQuestions.label.HileLeftPanels") + "', '" + _ctx.appRes("UIQuestions.label.ShowLeftPanels") + "');");
+  jsmanager.addCustomizedOnLoadScript('eXo.answer.UIAnswersPortlet.loadActionScroll();');
   String cateId = uicomponent.getCategoryId();
   uicomponent.setIsModerators(); //reset permission
   boolean canEditQuestion = uicomponent.getCanEditQuestion();

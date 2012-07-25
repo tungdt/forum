@@ -268,10 +268,12 @@
   UIAnswersPortlet.prototype.initBreadcumbScroll = function () {
     if ($('#UIPortalApplication').css('display') == 'none') return;
     var uiNav = eXo.answer.UIAnswersPortlet;
-    uiNav.scrollMgr['UIBreadcumbs'].init();
-    uiNav.scrollMgr['UIBreadcumbs'].checkAvailableSpace();
-    if (uiNav.scrollMgr['UIBreadcumbs'].arrowsContainer) {
-    uiNav.scrollMgr['UIBreadcumbs'].renderElements();
+    if(uiNav.scrollMgr['UIBreadcumbs'] != undefined) {
+      uiNav.scrollMgr['UIBreadcumbs'].init();
+      uiNav.scrollMgr['UIBreadcumbs'].checkAvailableSpace();
+      if (uiNav.scrollMgr['UIBreadcumbs'].arrowsContainer) {
+        uiNav.scrollMgr['UIBreadcumbs'].renderElements();
+      }
     }
   };
 
@@ -303,9 +305,13 @@
   UIAnswersPortlet.prototype.initActionScroll = function () {
     if ($('#UIPortalApplication').css('display') == 'none') return;
     var uiNav = eXo.answer.UIAnswersPortlet;
-    uiNav.scrollMgr['UIQuestions'].init();
-    uiNav.scrollMgr['UIQuestions'].checkAvailableSpace();
-    uiNav.scrollMgr['UIQuestions'].renderElements();
+    if(uiNav.scrollMgr['UIQuestions'] != undefined) {
+      uiNav.scrollMgr['UIQuestions'].init();
+      uiNav.scrollMgr['UIQuestions'].checkAvailableSpace();
+      uiNav.scrollMgr['UIQuestions'].renderElements();
+    } else {
+      uiNav.loadActionScroll();
+    }
   };
   
   UIAnswersPortlet.prototype.onClickSlidebarButton = function () {
