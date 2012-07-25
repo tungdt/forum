@@ -75,7 +75,7 @@
             i = new Date().getTime();
         %>
           <div class="FAQTmpCategory"><span></span></div>
-          <div class="$classCss FAQCategory">
+          <div class="$classCss FAQCategory disableContextMenu">
           	<input type="hidden" class="InfoCategory" id="<%=category.getId()%>" value="<%=uicomponent.event("ChangeIndex",uicomponent.OBJECTID)%>" title="input hidden" name="<%=category.getId()%>"/>
             <div class="oncontextmenu" id="UIContextPopupMenu$i">
 	            <a title="<%=category.getName()%>" onclick="<%=uicomponent.event("OpenCategory", category.getPath())%>">
