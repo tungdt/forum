@@ -101,45 +101,45 @@ public class UIBreadcumbs extends UIContainer {
     return forumPortlet.getUserProfile();
   }
 
-  public void setUpdataPath(String path) throws Exception {
+  public void setUpdataPath(String path) {
     isLink = false;
-    setRenderForumLink(path);
-    String tempPath = ForumUtils.EMPTY_STR;
-    String frspId = getAncestorOfType(UIForumPortlet.class).getForumIdOfSpace();
-    if(!ForumUtils.isEmpty(frspId)) {
-      path_.clear();
-      breadcumbs_.clear();
-      String temp[] = path.split(ForumUtils.SLASH);
-      for (String string : temp) {
-        if (!ForumUtils.isEmpty(tempPath))
-          tempPath = tempPath + ForumUtils.SLASH + string;
-        else
-          tempPath = string;
-        Object obj = forumService.getObjectNameByPath(tempPath);
-        if (obj instanceof Forum) {
-          addBreadcumbs(tempPath, ((Forum) obj).getForumName(), ForumUtils.FORUM);
-        } else if (obj instanceof Topic) {
-          addBreadcumbs(tempPath, ((Topic) obj).getTopicName(), ForumUtils.TOPIC);
-        } else if (obj instanceof Tag) {
-          Forum forum = (Forum) forumService.getObjectNameById(frspId, Utils.FORUM);
-          addBreadcumbs(new StringBuilder(forum.getCategoryId()).append(ForumUtils.SLASH).append(forum.getId()).toString(), 
-                                                forum.getForumName(), ForumUtils.FORUM);
-          addBreadcumbs(tempPath, ((Tag) obj).getName(), ForumUtils.TAG);
+    try {
+      setRenderForumLink(path);
+      String tempPath = ForumUtils.EMPTY_STR;
+      String frspId = getAncestorOfType(UIForumPortlet.class).getForumIdOfSpace();
+      if(!ForumUtils.isEmpty(frspId)) {
+        path_.clear();
+        breadcumbs_.clear();
+        String temp[] = path.split(ForumUtils.SLASH);
+        for (String string : temp) {
+          if (!ForumUtils.isEmpty(tempPath))
+            tempPath = tempPath + ForumUtils.SLASH + string;
+          else
+            tempPath = string;
+          Object obj = forumService.getObjectNameByPath(tempPath);
+          if (obj instanceof Forum) {
+            addBreadcumbs(tempPath, ((Forum) obj).getForumName(), ForumUtils.FORUM);
+          } else if (obj instanceof Topic) {
+            addBreadcumbs(tempPath, ((Topic) obj).getTopicName(), ForumUtils.TOPIC);
+          } else if (obj instanceof Tag) {
+            Forum forum = (Forum) forumService.getObjectNameById(frspId, Utils.FORUM);
+            addBreadcumbs(new StringBuilder(forum.getCategoryId()).append(ForumUtils.SLASH).append(forum.getId()).toString(), 
+                                                  forum.getForumName(), ForumUtils.FORUM);
+            addBreadcumbs(tempPath, ((Tag) obj).getName(), ForumUtils.TAG);
+          }
         }
-      }
-    } else if (!ForumUtils.isEmpty(path) && !path.equals(FORUM_SERVICE)) {
-      String temp[] = path.split(ForumUtils.SLASH);
-      if (path.indexOf(ForumUtils.FIELD_EXOFORUM_LABEL) >= 0) {
-        if (!ForumUtils.FIELD_EXOFORUM_LABEL.equals(path)) {
+      } else if (!ForumUtils.isEmpty(path) && !path.equals(FORUM_SERVICE)) {
+        String temp[] = path.split(ForumUtils.SLASH);
+        if (path.indexOf(ForumUtils.FIELD_EXOFORUM_LABEL) >= 0) {
+          if (!ForumUtils.FIELD_EXOFORUM_LABEL.equals(path)) {
+            clearBreadcumbs();
+          }
+          if (!breadcumbs_.contains(ForumUtils.FIELD_SEARCHFORUM_LABEL)) {
+            addBreadcumbs(ForumUtils.SLASH + ForumUtils.FIELD_EXOFORUM_LABEL, ForumUtils.FIELD_SEARCHFORUM_LABEL, "");
+          }
+        } else {
           clearBreadcumbs();
-        }
-        if (!breadcumbs_.contains(ForumUtils.FIELD_SEARCHFORUM_LABEL)) {
-          addBreadcumbs(ForumUtils.SLASH + ForumUtils.FIELD_EXOFORUM_LABEL, ForumUtils.FIELD_SEARCHFORUM_LABEL, "");
-        }
-      } else {
-        clearBreadcumbs();
-        int i = 0;
-        try {
+          int i = 0;
           for (String string : temp) {
             if (!ForumUtils.isEmpty(tempPath))
               tempPath = tempPath + ForumUtils.SLASH + string;
@@ -164,12 +164,12 @@ public class UIBreadcumbs extends UIContainer {
             }
             ++i;
           }
-        } catch (Exception e) {
-          log.warn(String.format("Failed to find object with path %s", path), e);
         }
+      } else {
+        clearBreadcumbs();
       }
-    } else {
-      clearBreadcumbs();
+    } catch (Exception e) {
+      log.warn(String.format("Failed to find object with path %s", path), e);
     }
   }
   

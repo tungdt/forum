@@ -1,0 +1,53 @@
+/*
+ * Copyright (C) 2003-2012 eXo Platform SAS.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.exoplatform.forum.router.impl.handler;
+
+import org.exoplatform.forum.ForumUtils;
+import org.exoplatform.forum.router.event.BaseEvent;
+import org.exoplatform.forum.router.event.HandleException;
+import org.exoplatform.forum.service.Utils;
+import org.exoplatform.forum.webui.UIBreadcumbs;
+import org.exoplatform.forum.webui.UICategories;
+import org.exoplatform.forum.webui.UICategoryContainer;
+import org.exoplatform.forum.webui.UIForumLinks;
+import org.exoplatform.forum.webui.UIForumPortlet;
+
+/**
+ * Created by The eXo Platform SAS
+ *  Author : Vu Cong Thanh
+ *           thanhvc@exoplatform.com
+ *  Developer : <a href="mailto:tuvd@exoplatform.com">Vu Duy Tu</a>
+ * Apr 24, 2012  
+ */
+public class ForumHandler extends BaseEventHandler {
+
+  @Override
+  public void handle(BaseEvent event) throws HandleException {
+    System.out.println("ForumHandler::" + event.toString() + "::with::PageID = " + event.getArgs().get("pageID"));
+    
+    UIForumPortlet forumPortlet = (UIForumPortlet) event.getSource();
+    forumPortlet.updateIsRendered(ForumUtils.CATEGORIES);
+    UICategoryContainer categoryContainer = forumPortlet.getChild(UICategoryContainer.class);
+    categoryContainer.updateIsRender(true);
+    categoryContainer.getChild(UICategories.class).setIsRenderChild(false);
+    forumPortlet.getChild(UIForumLinks.class).setUpdateForumLinks();
+    forumPortlet.getChild(UIBreadcumbs.class).setUpdataPath(Utils.FORUM_SERVICE);
+    event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
+    //event.broadcast(new CategoryShowHandler());
+  }
+
+}

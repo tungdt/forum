@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.exoplatform.commons.utils.PageList;
+import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.organization.Group;
@@ -41,9 +41,8 @@ import org.exoplatform.services.security.MembershipEntry;
 public class UserHelper {
   
   public static OrganizationService getOrganizationService() {
-    OrganizationService organizationService = (OrganizationService) ExoContainerContext.getCurrentContainer()
-                                                                                       .getComponentInstanceOfType(OrganizationService.class);
-    return organizationService;
+    return (OrganizationService) ExoContainerContext.getCurrentContainer()
+                 .getComponentInstanceOfType(OrganizationService.class);
   }
   
   private static UserHandler getUserHandler() {
@@ -54,29 +53,36 @@ public class UserHelper {
     return getOrganizationService().getGroupHandler();
   }
 
-  public static List<Group> getAllGroup() throws Exception {
-    Collection<Group> pageList = getGroupHandler().getAllGroups() ;
-    List<Group> list = new ArrayList<Group>(pageList) ;
-    return list;
+  @SuppressWarnings("unchecked")
+  public static List<Group> getAllGroup() {
+    try {
+      return new ArrayList<Group>(getGroupHandler().getAllGroups());
+    } catch (Exception e) {
+      return new ArrayList<Group>();
+    }
   }
 
-  public static String checkValueUser(String values) throws Exception {
+  public static String checkValueUser(String values) {
     StringBuilder errorUser = new StringBuilder();
     if (values != null && values.trim().length() > 0) {
       String[] userIds = values.split(",");
       for (String str : userIds) {
         str = str.trim();
-        if (str.indexOf("$") >= 0) str = str.replace("$", "&#36");
-
+        if (str.indexOf("$") >= 0) {
+          str = str.replace("$", "&#36");
+        }
         if (str.indexOf("/") >= 0) {
           if (!UserHelper.hasGroupIdAndMembershipId(str)) {
             if (errorUser.length() == 0) errorUser.append(str);
             else errorUser.append(", ").append(str);
           }
         } else {// user
-          if ((getUserHandler().findUserByName(str) == null)) {
-            if (errorUser.length() == 0) errorUser.append(str);
-            else errorUser.append(", ").append(str);
+          try {
+            if ((getUserHandler().findUserByName(str) == null)) {
+              errorUser.append((errorUser.length() == 0) ? str : (", " + str));
+            }
+          } catch (Exception e) {
+            errorUser.append((errorUser.length() == 0) ? str : (", " + str));
           }
         }
       }
@@ -84,73 +90,43 @@ public class UserHelper {
     return errorUser.toString();
   }
 
-  public static boolean hasGroupIdAndMembershipId(String str) throws Exception {
-    if(str.indexOf(":") >= 0) { //membership
-      String[] array = str.split(":") ;
-      try {
-        getGroupHandler().findGroupById(array[1]).getId() ;
-      }catch (Exception e) {
-        return false ;
+  public static boolean hasGroupIdAndMembershipId(String str) {
+    try {
+      if (str.indexOf(":") >= 0) { // membership
+        String[] array = str.split(":");
+        getGroupHandler().findGroupById(array[1]).getId();
+        if (array[0].length() == 1 && array[0].charAt(0) == '*') {
+          return true;
+        } else if (array[0].length() < 0 || getOrganizationService().getMembershipTypeHandler().findMembershipType(array[0]) == null) {
+          return false;
+        }
+      } else { // group
+        getGroupHandler().findGroupById(str).getId();
       }
-      if(array[0].length() == 1 && array[0].charAt(0) == '*') {
-        return true ;
-      }else if(array[0].length() > 0){
-        if(getOrganizationService().getMembershipTypeHandler().findMembershipType(array[0])== null) return false ;
-      }else return false ;
-    }else { //group
-      try {
-        getGroupHandler().findGroupById(str).getId() ;
-      }catch (Exception e) {
-        return false ;
-      }
+    } catch (Exception e) {
+      return false;
     }
-    return true ;
+    return true;
   }
 
 
-  @SuppressWarnings("unchecked")
   public static boolean hasUserInGroup(String groupId, String userId) throws Exception {
-    List<User> userList = new ArrayList<User>() ;
-    PageList pageList = getUserHandler().findUsersByGroup(groupId) ;
-    for(int i = 1; i <= pageList.getAvailablePage(); i++) {
-      userList.clear() ;
-      userList.addAll(pageList.getPage(i)) ;
-      for (User user : userList) {
-        if(user.getUserName().equals(userId)) return true ;
-      }
+    ListAccess<User> pageList = getUserHandler().findUsersByGroupId(groupId) ;
+    User[] userArray = (User[]) pageList.load(0, pageList.getSize());
+    for (int i = 0; i < pageList.getSize(); i++) {
+      if(userArray[i].getUserName().equals(userId)) return true ;
     }
-    
     return false ;
   }
 
-  //@SuppressWarnings("unchecked")
-  /*public static List<User> getUserByGroupId(String groupId) throws Exception {
-    return getUserHandler().findUsersByGroup(groupId).getAll() ;
-  }*/
-
-  @SuppressWarnings("unchecked")
-  public static PageList getUserPageListByGroupId(String groupId) throws Exception {
-    return getUserHandler().findUsersByGroup(groupId) ;
+  public static ListAccess<User> getUserPageListByGroupId(String groupId) throws Exception {
+    return getUserHandler().findUsersByGroupId(groupId) ;
   }
   
   public static User getUserByUserId(String userId) throws Exception {
     return getUserHandler().findUserByName(userId) ;
   }
 
-  /*@SuppressWarnings("unchecked")
-  **
-   * @deprecated this method is danngerous and may not work with all OrganizationService impl
-   *
-  public static List<User> getAllUser() throws Exception {
-    PageList pageList = getUserHandler().getUserPageList(10) ;
-    List<User>list = pageList.getAll() ;
-    return list;
-  }*/
-  
-  /*public static PageList getAllUserPageList() throws Exception {
-    return getUserHandler().getUserPageList(10);
-  }*/
-  
   public static String[] getUserGroups() throws Exception {
     Object[] objGroupIds = getGroupHandler().findGroupsOfUser(UserHelper.getCurrentUser()).toArray();
     String[] groupIds = new String[objGroupIds.length];
@@ -169,13 +145,13 @@ public class UserHelper {
   }
 
   
+  @SuppressWarnings("unchecked")
   public static List<Group> findGroups(Group group) throws Exception {
     return (List<Group>) getGroupHandler().findGroups(group);
   }
   
-  @SuppressWarnings("unchecked")
-  public static PageList getPageListUser() throws Exception {
-    return getUserHandler().getUserPageList(10);
+  public static ListAccess<User> getPageListUser() throws Exception {
+    return getUserHandler().findAllUsers();
   }
 
   public static boolean isAnonim() {
@@ -185,8 +161,13 @@ public class UserHelper {
     return false;
   }
   
-  public static Collection findMembershipsByUser(String userId) throws Exception {
-    return getOrganizationService().getMembershipHandler().findMembershipsByUser(userId);
+  @SuppressWarnings("unchecked")
+  public static Collection<Membership> findMembershipsByUser(String userId) {
+    try {
+      return getOrganizationService().getMembershipHandler().findMembershipsByUser(userId);
+    } catch (Exception e) {
+      return new ArrayList<Membership>();
+    }
   }
 
   /**
@@ -194,10 +175,8 @@ public class UserHelper {
    * @param userId username
    * @return list of groups an user belong, and memberships of the user in each group. If userId is null, groups and memberships of the current
    * user will be returned.
-   * @throws Exception
    */
-  @SuppressWarnings("unchecked")
-  public static List<String> getAllGroupAndMembershipOfUser(String userId) throws Exception {
+  public static List<String> getAllGroupAndMembershipOfUser(String userId) {
     List<String> listOfUser = new ArrayList<String>();
     if (userId == null) {
       ConversationState conversionState = ConversationState.getCurrent();
@@ -221,10 +200,12 @@ public class UserHelper {
     return listOfUser;
   }
 
-  static public String getEmailUser(String userName) throws Exception {
-    User user = getUserHandler().findUserByName(userName) ;
-    String email = user.getEmail() ;
-    return email;
+  static public String getEmailUser(String userName) {
+    try {
+      return getUserHandler().findUserByName(userName).getEmail();
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   static public String getCurrentUser() {

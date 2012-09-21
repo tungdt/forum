@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright (C) 2010 eXo Platform SAS.
+
+    This is free software; you can redistribute it and/or modify it
+    under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation; either version 2.1 of
+    the License, or (at your option) any later version.
+
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this software; if not, write to the Free
+    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+    02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
+-->
+<configuration
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+
+  <component>
+    <key>org.exoplatform.forum.router.ExoRouter</key>
+    <type>org.exoplatform.forum.router.ExoRouter</type>
+    <component-plugins>
+      <component-plugin>
+        <name>addRoutes</name>
+        <set-method>addRoutes</set-method>
+        <type>org.exoplatform.forum.router.ExoRouterConfig</type>
+        <init-params>
+          <object-param>
+            <name>uri.configuration</name>
+            <description>defines action name which associate with uri pattern.</description>
+            <object type="org.exoplatform.forum.router.ExoRouterConfig">
+              <field name="routeMapping">
+                <map type="java.util.HashMap">
+                  <entry>
+                    <key><string>forum.home</string></key>
+                    <value><string>/{pageID}/ForumService</string></value>
+                  </entry>
+                  <entry>
+                    <key><string>forum.search</string></key>
+                    <value><string>/{pageID}/SearchForum</string></value>
+                  </entry>
+                  <entry>
+                    <key><string>forum.tag</string></key>
+                    <value><string>/{pageID}/Tag</string></value>
+                  </entry>
+                  <entry>
+                    <key><string>forum.topic.show</string></key>
+                    <value><string>/{pageID}/topic/{topicID}</string></value>
+                  </entry>
+                  <entry>
+                    <key><string>forum.topic.reply</string></key>
+                    <value><string>/{pageID}/topic/{topicID}/reply</string></value>
+                  </entry>
+                  <entry>
+                    <key><string>forum.topic.quote</string></key>
+                    <value><string>/{pageID}/topic/{topicID}/quote</string></value>
+                  </entry>
+                  <entry>
+                    <key><string>forum.topic.post.show</string></key>
+                    <value><string>/{pageID}/topic/{topicID}/post/{postID}</string></value>
+                  </entry>
+                  <entry>
+                    <key><string>forum.topic.page</string></key>
+                    <value><string>/{pageID}/topic/{topicID}/page/{pageNo}</string></value>
+                  </entry>
+                  <entry>
+                    <key><string>forum.forum.show</string></key>
+                    <value><string>/{pageID}/forum/{forumID}</string></value>
+                  </entry>
+                  <entry>
+                    <key><string>forum.forum.page</string></key>
+                    <value><string>/{pageID}/forum/{forumID}/page/{pageNo}</string></value>
+                  </entry>
+                  <entry>
+                    <key><string>forum.category.show</string></key>
+                    <value><string>/{pageID}/category/{categoryID}</string></value>
+                  </entry>
+                </map>
+              </field>
+            </object>
+          </object-param>
+        </init-params>
+      </component-plugin>
+    </component-plugins>
+  </component>
+  
+</configuration>

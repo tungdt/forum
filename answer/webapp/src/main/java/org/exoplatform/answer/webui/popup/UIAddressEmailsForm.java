@@ -153,8 +153,8 @@ public class UIAddressEmailsForm extends BaseUIForm implements UIPopupComponent 
       for (User user : listAcess.load(0, listAcess.getSize())) {
         mapObject.put(user.getUserName(), user);
       }
-
-      ObjectPageList<User> objPageList = new ObjectPageList(Arrays.asList(mapObject.values().toArray()), 10);
+      
+      ObjectPageList<User> objPageList = new ObjectPageList(new ArrayList(mapObject.values()), 10);
       uiPageList_.setPageList(objPageList);
     } catch (Exception e) {
       log.error("Can not search user by key, exception: " + e.getMessage());
@@ -182,6 +182,11 @@ public class UIAddressEmailsForm extends BaseUIForm implements UIPopupComponent 
 
   public void setUserList(PageList<User> userList) throws Exception {
     uiPageList_.setPageList(userList);
+  }
+
+  public void setUserList(ListAccess<User> listAcess) throws Exception {
+    ObjectPageList<User> objPageList = new ObjectPageList(Arrays.asList(listAcess.load(0, listAcess.getSize())), 10);
+    uiPageList_.setPageList(objPageList);
   }
 
   public void setAlreadyCheckedUser(List<User> alreadyCheckedUser) throws Exception {
@@ -321,10 +326,12 @@ public class UIAddressEmailsForm extends BaseUIForm implements UIPopupComponent 
     public void execute(Event<UIAddressEmailsForm> event) throws Exception {
       UIAddressEmailsForm uiAddressForm = event.getSource();
       String group = ((UIFormSelectBoxWithGroups) uiAddressForm.getChildById(UIAddressEmailsForm.USER_GROUP)).getValue();
-      if (group.equals("all-group"))
+      if (group.equals("all-group")){
         uiAddressForm.setUserList(UserHelper.getPageListUser());
-      else
+      }
+      else{
         uiAddressForm.setUserList(UserHelper.getUserPageListByGroupId(group));
+      }
       uiAddressForm.selectedAddressId_ = group;
       uiAddressForm.getUIStringInput(UIAddressEmailsForm.USER_GROUP).setValue(null);
       ((UIFormSelectBoxWithGroups) uiAddressForm.getChildById(UIAddressEmailsForm.USER_GROUP)).setValue(uiAddressForm.selectedAddressId_);

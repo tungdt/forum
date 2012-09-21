@@ -37,6 +37,13 @@ import org.exoplatform.forum.common.webui.UIPopupAction;
 import org.exoplatform.forum.common.webui.UIPopupContainer;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.info.ForumParameter;
+import org.exoplatform.forum.router.ExoRouter;
+import org.exoplatform.forum.router.ExoRouter.Route;
+import org.exoplatform.forum.router.event.BaseEvent;
+import org.exoplatform.forum.router.event.HandleException;
+import org.exoplatform.forum.router.impl.handler.BaseEventHandler;
+import org.exoplatform.forum.router.impl.handler.ForumEvent;
+import org.exoplatform.forum.router.impl.handler.HandlerFactory;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.ForumService;
@@ -173,6 +180,9 @@ public class UIForumPortlet extends UIPortletApplication {
     } catch (Exception e) {
       log.warn("Failed to load portlet preferences", e);
     }
+    
+    // initialization router
+    initRouter();
   }
 
   public void processRender(WebuiApplication app, WebuiRequestContext context) throws Exception {
@@ -202,7 +212,8 @@ public class UIForumPortlet extends UIPortletApplication {
       }
     }
     try {
-      renderComponentByURL(context);
+      handlerActionByURL(context);
+      //renderComponentByURL(context);
     } catch (Exception e) {
       log.error("Can not open component by url, view exception: ", e);
     }
@@ -314,13 +325,86 @@ public class UIForumPortlet extends UIPortletApplication {
     }
   }
 
-  public void renderForumHome() throws Exception{
+  public void renderForumHome() {
+    try {
+      StringBuilder pageNodeSelected = new StringBuilder(ForumUtils.SLASH);
+      pageNodeSelected.append(Util.getUIPortal().getSelectedUserNode().getURI())   
+                      .append(ForumUtils.SLASH).append(Utils.FORUM_SERVICE);
+      doExecute(pageNodeSelected.toString());
+    } catch (Exception e) {
+      log.warn("Can not rendering the Forum home page...");
+    }
+    // Executing Forum home page.              
+    /*
     updateIsRendered(ForumUtils.CATEGORIES);
     UICategoryContainer categoryContainer = getChild(UICategoryContainer.class);
     categoryContainer.updateIsRender(true);
     categoryContainer.getChild(UICategories.class).setIsRenderChild(false);
     getChild(UIForumLinks.class).setUpdateForumLinks();
     getChild(UIBreadcumbs.class).setUpdataPath(Utils.FORUM_SERVICE);
+    */
+  }
+  
+  private void initRouter() {
+/*
+    // {selectedNode}/ForumService
+    ExoRouter.prependRoute("/{pageID}/ForumService", HandlerFactory.ACTIONS_TYPE.HOME.getName());
+
+    // {selectedNode}/SearchForum
+    ExoRouter.addRoute("/{pageID}/SearchForum", HandlerFactory.ACTIONS_TYPE.SEARCH.getName());
+
+    // {selectedNode}/Tag
+    ExoRouter.addRoute("/{pageID}/Tag", HandlerFactory.ACTIONS_TYPE.TAG.getName());
+
+    // {selectedNode}/topic/{topicId}
+    ExoRouter.addRoute("/{pageID}/topic/{topicID}", HandlerFactory.ACTIONS_TYPE.TOPIC.getName());
+    // {selectedNode}/topic/topic{topicId}/true
+    ExoRouter.addRoute("/{pageID}/topic/{topicID}/reply", HandlerFactory.ACTIONS_TYPE.REPLY.getName());
+    // {selectedNode}/topic/{topicId}/false
+    ExoRouter.addRoute("/{pageID}/topic/{topicID}/quote", HandlerFactory.ACTIONS_TYPE.QUOTE.getName());
+    // {selectedNode}/topic/{topicID}/{postID}
+    ExoRouter.addRoute("/{pageID}/topic/{topicID}/post/{postID}", HandlerFactory.ACTIONS_TYPE.POST.getName());
+    // {selectedNode}/topic/topic{topicID}/
+    ExoRouter.addRoute("/{pageID}/topic/{topicID}/page/{pageNo}", HandlerFactory.ACTIONS_TYPE.TOPIC_PAGE.getName());
+
+    // {selectedNode}/forum/forum{forumID}
+    ExoRouter.addRoute("/{pageID}/forum/{forumID}", HandlerFactory.ACTIONS_TYPE.FORUM.getName());
+    // {selectedNode}/forum/{forumID}/{number}
+    ExoRouter.addRoute("/{pageID}/forum/{forumID}/page/{pageNo}", HandlerFactory.ACTIONS_TYPE.FORUM_PAGE.getName());
+
+    // {selectedNode}/category/{categoryID}
+    ExoRouter.addRoute("/{pageID}/category/{categoryID}", HandlerFactory.ACTIONS_TYPE.CATEGORY.getName());
+*/
+  }
+  
+  public void handlerActionByURL(WebuiRequestContext context) throws Exception {
+    PortalRequestContext portalContext = Util.getPortalRequestContext();
+    String isAjax = portalContext.getRequestParameter("ajaxRequest");
+    if (isAjax != null && Boolean.parseBoolean(isAjax))
+      return;
+
+    String urlInput = ((HttpServletRequest) portalContext.getRequest()).getRequestURL().toString();
+    String pageNodeSelected = Util.getUIPortal().getSelectedUserNode().getURI() + ForumUtils.SLASH;
+    String portalName = Util.getUIPortal().getName() +  ForumUtils.SLASH ;
+    if(urlInput.contains(portalName + pageNodeSelected)) {
+      urlInput = urlInput.substring(urlInput.lastIndexOf(portalName + pageNodeSelected) + portalName.length());
+    } else if(urlInput.contains(pageNodeSelected)) {
+      urlInput = urlInput.substring(urlInput.lastIndexOf(pageNodeSelected)-1);
+    }
+    log.info("Input URL: " + urlInput);
+    doExecute(urlInput);
+  }
+  
+  private void doExecute(String urlInput) throws HandleException {
+    Route route = ExoRouter.route(urlInput);
+    if(route != null) {
+      log.info("Action type: " + route.action);
+      log.info("Action handler " + route.localArgs.toString());
+      BaseEvent event = new ForumEvent(this, route.action, route.localArgs);
+      //
+      BaseEventHandler handler = HandlerFactory.getHandler(event);
+      handler.handle(event);
+    }
   }
   
   public void setRenderForumLink() {
