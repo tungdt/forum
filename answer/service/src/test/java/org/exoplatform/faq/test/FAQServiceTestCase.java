@@ -18,6 +18,7 @@ package org.exoplatform.faq.test;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.exoplatform.container.StandaloneContainer;
 import org.exoplatform.services.jcr.RepositoryService;
@@ -25,6 +26,10 @@ import org.exoplatform.services.jcr.ext.app.SessionProviderService;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.rest.impl.ApplicationContextImpl;
+import org.exoplatform.services.rest.impl.ProviderBinder;
+import org.exoplatform.services.rest.impl.RequestHandlerImpl;
+import org.exoplatform.services.rest.impl.ResourceBinder;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 
@@ -53,6 +58,12 @@ public abstract class FAQServiceTestCase extends FAQTestCase {
   protected SessionProvider             sessionProvider;
 
   private static SessionProviderService sessionProviderService = null;
+  
+  protected ProviderBinder              providerBinder;
+
+  protected ResourceBinder              resourceBinder;
+
+  protected RequestHandlerImpl          requestHandler;
 
   static {
     // we do this in static to save a few cycles
@@ -65,10 +76,52 @@ public abstract class FAQServiceTestCase extends FAQTestCase {
 
   public void setUp() throws Exception {
     startSystemSession();
+    
+    resourceBinder = (ResourceBinder) container.getComponentInstanceOfType(ResourceBinder.class);
+    requestHandler = (RequestHandlerImpl) container.getComponentInstanceOfType(RequestHandlerImpl.class);
+    ProviderBinder.setInstance(new ProviderBinder());
+    providerBinder = ProviderBinder.getInstance();
+    ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providerBinder));
+    resourceBinder.clear();
   }
 
   public void tearDown() throws Exception {
 
+  }
+  
+  public boolean registry(Object resource) throws Exception {
+    // container.registerComponentInstance(resource);
+    return resourceBinder.bind(resource);
+  }
+  
+  public boolean registry(Class<?> resourceClass) throws Exception {
+    // container.registerComponentImplementation(resourceClass.getName(),
+    // resourceClass);
+    return resourceBinder.bind(resourceClass);
+  }
+  
+  @Deprecated
+  public boolean unregistry(Object resource) {
+    // container.unregisterComponentByInstance(resource);
+    return resourceBinder.unbind(resource.getClass());
+  }
+  
+  @Deprecated
+  public boolean unregistry(Class<?> resourceClass) {
+    // container.unregisterComponent(resourceClass.getName());
+    return resourceBinder.unbind(resourceClass);
+  }
+  
+  public void addResource(final Class<?> resourceClass, MultivaluedMap<String, String> properties) {
+    resourceBinder.addResource(resourceClass, properties);
+  }
+  
+  public void addResource(final Object resource, MultivaluedMap<String, String> properties) {
+    resourceBinder.addResource(resource, properties);
+  }
+  
+  public void removeResource(Class clazz) {
+    resourceBinder.removeResource(clazz);
   }
 
   protected void startSystemSession() {

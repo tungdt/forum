@@ -169,6 +169,103 @@
 	  <key>org.exoplatform.services.organization.OrganizationService</key>
 	  <type>org.exoplatform.commons.testing.mock.SimpleMockOrganizationService</type>
  	</component>
+ 	
+ 	<component>
+    <type>org.exoplatform.faq.service.ws.FAQWebservice</type>
+  </component>
+
+  <component>
+    <type>org.exoplatform.services.rest.impl.ProvidersRegistry</type>
+  </component>
+  
+  <component>
+     <type>org.exoplatform.services.rest.impl.RequestHandlerImpl</type>
+  </component>
+
+  <component>
+     <type>org.exoplatform.services.rest.impl.RequestDispatcher</type>
+  </component>
+
+  <component>
+     <type>org.exoplatform.services.rest.impl.ResourceBinder</type>
+  </component>
+
+  <component>
+     <type>org.exoplatform.services.rest.impl.provider.JAXBContextResolver</type>
+  </component>
+
+  <external-component-plugins>
+     <target-component>org.exoplatform.services.rest.impl.provider.JAXBContextResolver</target-component>
+     <component-plugin>
+        <name>ws.rs.jaxb.context</name>
+        <set-method>addPlugin</set-method>
+        <type>org.exoplatform.services.rest.impl.provider.JAXBContextComponentPlugin</type>
+        <init-params>
+           <value-param>
+              <name>wadl.application</name>
+              <value>org.exoplatform.services.rest.wadl.research.Application</value>
+           </value-param>
+        </init-params>
+     </component-plugin>
+  </external-component-plugins>
+
+  <external-component-plugins>
+     <target-component>org.exoplatform.services.rest.impl.RequestHandlerImpl</target-component>
+     <component-plugin>
+        <name>ws.rs.entity.provider</name>
+        <set-method>addPlugin</set-method>
+        <type>org.exoplatform.services.rest.impl.provider.EntityProviderComponentPlugin</type>
+        <!-- NOTE it is just example of configuration. -->
+        <!-- StringEntityProvider is part of REST framework, not needs to add it from configuration -->
+        <!--
+        <init-params>
+           <value-param>
+              <name>strings</name>
+              <value>org.exoplatform.services.rest.impl.provider.StringEntityProvider</value>
+           </value-param>
+        </init-params>
+        -->
+     </component-plugin>
+     <component-plugin>
+        <name>ws.rs.method.filter</name>
+        <set-method>addPlugin</set-method>
+        <type>org.exoplatform.services.rest.impl.method.MethodInvokerFilterComponentPlugin</type>
+        <!--
+        <init-params>
+           <value-param>
+              <name>name</name>
+              <value>filter class</value>
+           </value-param>
+        </init-params>
+        -->
+     </component-plugin>
+     <component-plugin>
+        <name>ws.rs.request.filter</name>
+        <set-method>addPlugin</set-method>
+        <type>org.exoplatform.services.rest.impl.RequestFilterComponentPlugin</type>
+        <!--
+        <init-params>
+           <value-param>
+              <name>name</name>
+              <value>filter class</value>
+           </value-param>
+        </init-params>
+        -->
+     </component-plugin>
+     <component-plugin>
+        <name>ws.rs.response.filter</name>
+        <set-method>addPlugin</set-method>
+        <type>org.exoplatform.services.rest.impl.ResponseFilterComponentPlugin</type>
+        <!--
+        <init-params>
+           <value-param>
+              <name>name</name>
+              <value>filter class</value>
+           </value-param>
+        </init-params>
+        -->
+     </component-plugin>
+  </external-component-plugins>
 
  <external-component-plugins>
     <target-component>org.exoplatform.forum.common.jcr.KSDataLocation</target-component>
