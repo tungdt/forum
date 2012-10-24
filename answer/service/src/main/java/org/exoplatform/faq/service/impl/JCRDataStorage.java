@@ -1048,7 +1048,8 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
   @Override
   public Question getQuestionById(String questionId) throws Exception {
     SessionProvider sessionProvider = CommonUtils.createSystemProvider();
-    return getQuestion(getQuestionNode(sessionProvider, questionId));
+    Node questionNode = getQuestionNode(sessionProvider, questionId);
+    return questionNode == null ? null : getQuestion(questionNode);
   }
 
   private List<String> getViewableCategoryIds(SessionProvider sessionProvider) throws Exception {
