@@ -30,6 +30,7 @@ import java.util.Random;
 import javax.jcr.Node;
 
 import org.apache.commons.io.FileUtils;
+import org.exoplatform.faq.base.FAQServiceTestCase;
 import org.exoplatform.faq.service.Answer;
 import org.exoplatform.faq.service.Cate;
 import org.exoplatform.faq.service.Category;
@@ -45,13 +46,23 @@ import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.QuestionLanguage;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.Watch;
+import org.exoplatform.faq.service.conf.FAQUserListener;
+import org.exoplatform.faq.service.impl.JCRDataStorage;
 import org.exoplatform.faq.service.impl.MultiLanguages;
-import org.exoplatform.faq.test.FAQServiceTestCase;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.NotifyInfo;
+import org.exoplatform.forum.common.UserHelper;
 import org.exoplatform.forum.common.jcr.PropertyReader;
-import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.organization.Group;
+import org.exoplatform.services.organization.GroupHandler;
+import org.exoplatform.services.organization.Membership;
+import org.exoplatform.services.organization.MembershipHandler;
+import org.exoplatform.services.organization.MembershipType;
+import org.exoplatform.services.organization.MembershipTypeHandler;
+import org.exoplatform.services.organization.OrganizationConfig;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.organization.UserHandler;
 
 /**
  * Created by The eXo Platform SAS
@@ -60,77 +71,93 @@ import org.exoplatform.services.security.Identity;
  * Oct 5, 2012  
  */
 public class TestDataStorage extends FAQServiceTestCase {
+  private DataStorage   dataStorage;
   
-  private DataStorage dataStorage;
-  
-  private FAQSetting faqSetting_     = new FAQSetting();
-  
-  private static String USER_ROOT = "root";
-
-  private static String USER_JOHN = "john";
-
-  private static String USER_DEMO = "demo";
-  
-  private static String categoryId1;
-
-  private static String categoryId2;
-  
-  private static String categoryId3;
-
-  private static String questionId1;
-  
-  private static String questionPath1;
-
-  private static String questionId2;
-  
-  private static String questionPath2;
-
-  private static String questionId3;
-  
-  private static String questionPath3;
-
-  private static String questionId4;
-  
-  private static String questionPath4;
-
-  private static String questionId5;
-  
-  private static String questionPath5;
-
   public TestDataStorage() throws Exception {
     super();
   }
   
   public void setUp() throws Exception {
     //
+    dataStorage = (DataStorage) getService(JCRDataStorage.class);
+    //
     super.setUp();
     
     //
-    ConversationState conversionState = ConversationState.getCurrent();
-    if(conversionState == null) {
-      conversionState = new ConversationState(new Identity("root"));
-      ConversationState.setCurrent(conversionState);
-    }
-    
-    //
-    dataStorage = (DataStorage) container.getComponentInstanceOfType(DataStorage.class);
-    
-    //
-    faqSetting_.setDisplayMode("both");
-    faqSetting_.setOrderBy("created");
-    faqSetting_.setOrderType("asc");
-    faqSetting_.setSortQuestionByVote(true);
-    faqSetting_.setIsAdmin("TRUE");
-    faqSetting_.setEmailMoveQuestion("content email move question");
-    faqSetting_.setEmailSettingSubject("Send notify watched");
-    faqSetting_.setEmailSettingContent("Question content: &questionContent_ <br/>Response: &questionResponse_ <br/> link: &questionLink_");
-    
-    //
-    defaultData();
+    initializationMember();
   }
   
+  private boolean isGroup(GroupHandler groupHandler, String gr) {
+    try {
+      return (groupHandler.findGroupById(gr) != null);
+    } catch (Exception e) {
+      return false;
+    }
+  }
+  
+  private void initializationMember() throws Exception {
+    OrganizationService service = getService(OrganizationService.class);
+    try {
+      GroupHandler groupHandler = service.getGroupHandler();
+      if (!isGroup(groupHandler, "/exotest/users")) {
+        Group group = groupHandler.createGroupInstance();
+        group.setGroupName("exotest");
+        group.setLabel("Exo test");
+        group.setDescription("Exo Test");
+        // Save group
+        groupHandler.addChild(null, group, true);
+        
+        
+        Group groupChild = groupHandler.createGroupInstance();
+        groupChild.setGroupName("users");
+        groupChild.setLabel("Users");
+        groupChild.setDescription("Users");
+        groupHandler.addChild(group, groupChild, true);
+        
+        
+        
+        
+System.out.println("\n\n=============> " + groupChild.getId());
+        MembershipTypeHandler mTHandler = service.getMembershipTypeHandler();
+        group = service.getGroupHandler().findGroupById(groupChild.getId());
+        MembershipType mt = mTHandler.createMembershipTypeInstance();
+        mt.setName("member");
+        mt.setDescription("Description");
+        mt.setOwner(USER_ROOT);
+        mt = mTHandler.saveMembershipType(mt, true);
+        MembershipHandler mhandler = service.getMembershipHandler();
+        //
+        String users[] = new String[] { USER_DEMO, USER_JOHN, USER_ROOT };
+        UserHandler userHandler = service.getUserHandler();
+        for (int i = 0; i < users.length; i++) {
+          String username = users[i];
+          User user = userHandler.findUserByName(username);
+          if (user == null) {
+            user = userHandler.createUserInstance(username);
+            user.setEmail(username + "@localhost");
+            user.setFirstName(username);
+            user.setLastName(username);
+            user.setPassword("gtn");
+            userHandler.createUser(user, true);
+            user = userHandler.findUserByName(username);
+          }
+          //
+          
+          mhandler.linkMembership(user, group, mt, true);
+        }
+        
+      }
+      System.out.println("\n\n==============================> XXXX: " 
+      +UserHelper.getAllGroupAndMembershipOfUser(USER_ROOT) +"\n\n");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  
   public void tearDown() throws Exception {
-    removeData();
+    super.tearDown();
   }
   
   public void testIsAdminRole() throws Exception {
@@ -894,7 +921,7 @@ public class TestDataStorage extends FAQServiceTestCase {
     eventQuery.setAdmin(true);
     eventQuery.setUserId(USER_ROOT);
     eventQuery.setType(FAQEventQuery.CATEGORY_AND_QUESTION);
-    assertEquals(2, dataStorage.getSearchResults(eventQuery).size());
+    assertEquals(7, dataStorage.getSearchResults(eventQuery).size());
     
     //
     eventQuery.setType(FAQEventQuery.FAQ_CATEGORY);
@@ -1141,9 +1168,9 @@ public class TestDataStorage extends FAQServiceTestCase {
     paths.add(questionPath3);
     List<String> questionContents = dataStorage.getQuestionContents(paths);
     assertEquals(3, questionContents.size());
-    assertEquals("What is FAQ?", questionContents.get(0));
-    assertEquals("What is FAQ?", questionContents.get(1));
-    assertEquals("What is FAQ?", questionContents.get(2));
+    assertEquals("This question for test", questionContents.get(0));
+    assertEquals("This question for test", questionContents.get(1));
+    assertEquals("This question for test", questionContents.get(2));
   }
   
   public void testGetQuestionNodeById() throws Exception {
@@ -1180,90 +1207,6 @@ public class TestDataStorage extends FAQServiceTestCase {
     // TODO:
   }
   
-  private Category createCategory(String categoryName, int  index) {
-    Date date = new Date();
-    Category category = new Category();
-    category.setName(categoryName);
-    category.setDescription("Description");
-    category.setModerateQuestions(true);
-    category.setModerateAnswers(true);
-    category.setViewAuthorInfor(true);
-    category.setModerators(new String[] { "root" });
-    category.setCreatedDate(date);
-    category.setUserPrivate(new String[] { "" });
-    category.setIndex(index);
-    category.setView(true);
-    return category;
-  }
-
-  private Question createQuestion(String cateId) throws Exception {
-    Question question = new Question();
-    question.setLanguage("English");
-    question.setQuestion("What is FAQ?");
-    question.setDetail("Add new question 1");
-    question.setAuthor("root");
-    question.setEmail("maivanha1610@gmail.com");
-    question.setActivated(true);
-    question.setApproved(true);
-    question.setCreatedDate(new Date());
-    question.setCategoryId(cateId);
-    question.setCategoryPath(cateId);
-    question.setRelations(new String[] {});
-    question.setAttachMent(new ArrayList<FileAttachment>());
-    question.setAnswers(new Answer[] {});
-    question.setComments(new Comment[] {});
-    question.setUsersVote(new String[] {});
-    question.setMarkVote(0.0);
-    question.setUsersWatch(new String[] {});
-    question.setEmailsWatch(new String[] {});
-    question.setTopicIdDiscuss(null);
-    return question;
-  }
-
-  private QuestionLanguage createQuestionLanguage(String language) {
-    QuestionLanguage questionLanguage = new QuestionLanguage();
-    questionLanguage.setAnswers(null);
-    questionLanguage.setComments(null);
-    questionLanguage.setDetail("detail for language " + language);
-    questionLanguage.setLanguage(language);
-    questionLanguage.setQuestion("question for language " + language);
-    return questionLanguage;
-  }
-
-  private Answer createAnswer(String user, String content) {
-    Answer answer = new Answer();
-    answer.setActivateAnswers(true);
-    answer.setApprovedAnswers(true);
-    answer.setDateResponse(new Date());
-    answer.setMarksVoteAnswer(0);
-    answer.setMarkVotes(0);
-    answer.setNew(true);
-    answer.setPostId(null);
-    answer.setResponseBy(user);
-    answer.setResponses(content);
-    answer.setUsersVoteAnswer(null);
-    answer.setLanguage("English");
-    return answer;
-  }
-
-  private Comment createComment(String user, String content) {
-    Comment comment = new Comment();
-    comment.setCommentBy(user);
-    comment.setComments(content);
-    comment.setDateComment(new Date());
-    comment.setNew(true);
-    comment.setPostId(null);
-    comment.setFullName(user + " " + user);
-    return comment;
-  }
-
-  private Watch createNewWatch(String user, String mail) {
-    Watch watch = new Watch();
-    watch.setUser(user);
-    watch.setEmails(mail);
-    return watch;
-  }
-
   private FileAttachment createUserAvatar(String fileName) throws Exception {
     FileAttachment attachment = new FileAttachment();
     try {
@@ -1273,93 +1216,9 @@ public class TestDataStorage extends FAQServiceTestCase {
       attachment.setInputStream(is);
       attachment.setMimeType("image/jpg");
     } catch (Exception e) {
-      log.error("Fail to create user avatar: ", e);
+      LOG.error("Fail to create user avatar: ", e);
     }
     return attachment;
   }
   
-  private void removeData() throws Exception {
-    FAQSetting faqSetting = new FAQSetting();
-    faqSetting.setIsAdmin("TRUE");
-    List<Category> categories = dataStorage.getSubCategories(Utils.CATEGORY_HOME, faqSetting, false, null);
-    for (Category category : categories) {
-      dataStorage.removeCategory(category.getPath());
-    }
-  }
-
-  private void defaultData() throws Exception {    
-    //
-    Category cate1 = createCategory("Category 1 to test question", 1);
-    categoryId1 = Utils.CATEGORY_HOME + "/" + cate1.getId();
-    
-    //
-    Category cate2 = createCategory("Category 2 to test question", 2);
-    categoryId2 = Utils.CATEGORY_HOME + "/" + cate2.getId();
-    
-    //
-    Category cate3 = createCategory("Category 3 has not question", 3);
-    cate3.setModerators(new String[] { "demo" });
-    categoryId3 = Utils.CATEGORY_HOME + "/" + cate3.getId();
-    
-    //
-    dataStorage.saveCategory(Utils.CATEGORY_HOME, cate1, true);
-    dataStorage.saveCategory(Utils.CATEGORY_HOME, cate2, true);
-    dataStorage.saveCategory(Utils.CATEGORY_HOME, cate3, true);
-    
-    //
-    Question question1 = createQuestion(categoryId1);
-    questionId1 = question1.getId();
-    questionPath1 = categoryId1 + "/" + Utils.QUESTION_HOME + "/" + questionId1;
-    
-    //
-    Question question2 = createQuestion(categoryId1);
-    question2.setRelations(new String[] {});
-    question2.setLanguage("English");
-    question2.setAuthor("root");
-    question2.setEmail("root@exoplatform.com");
-    question2.setDetail("Really?");
-    question2.setCreatedDate(new Date());
-    questionId2 = question2.getId();
-    questionPath2 = categoryId1 + "/" + Utils.QUESTION_HOME + "/" + questionId2;
-    
-    //
-    Question question3 = createQuestion(categoryId1);
-    question3.setRelations(new String[] {});
-    question3.setLanguage("English");
-    question3.setAuthor("Demo gtn");
-    question3.setEmail("demo@exoplatform.com");
-    question3.setDetail("What does eXo Forum do?");
-    question3.setCreatedDate(new Date());
-    questionId3 = question3.getId();
-    questionPath3 = categoryId1 + "/" + Utils.QUESTION_HOME + "/" + questionId3;
-    
-    //
-    Question question4 = createQuestion(categoryId1);
-    question4.setRelations(new String[] {});
-    question4.setLanguage("English");
-    question4.setAuthor("John Anthony");
-    question4.setEmail("john@exoplatform.com");
-    question4.setDetail("Tell me why?");
-    question4.setCreatedDate(new Date());
-    questionId4 = question4.getId();
-    questionPath4 = categoryId1 + "/" + Utils.QUESTION_HOME + "/" + questionId4;
-    
-    //
-    Question question5 = createQuestion(categoryId1);
-    question5.setRelations(new String[] {});
-    question5.setLanguage("English");
-    question5.setAuthor("Mary Kelly");
-    question5.setEmail("mary@exoplatform.com");
-    question5.setDetail("How can I build eXo Forum?");
-    question5.setCreatedDate(new Date());
-    questionId5 = question5.getId();
-    questionPath5 = categoryId1 + "/" + Utils.QUESTION_HOME + "/" + questionId5;
-
-    //
-    dataStorage.saveQuestion(question1, true, faqSetting_);
-    dataStorage.saveQuestion(question2, true, faqSetting_);
-    dataStorage.saveQuestion(question3, true, faqSetting_);
-    dataStorage.saveQuestion(question4, true, faqSetting_);
-    dataStorage.saveQuestion(question5, true, faqSetting_);
-  }
 }

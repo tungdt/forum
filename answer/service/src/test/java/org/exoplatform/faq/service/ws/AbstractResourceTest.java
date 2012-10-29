@@ -1,20 +1,22 @@
 /*
- * Copyright (C) 2003-2012 eXo Platform SAS.
+ * Copyright (C) 2009 eXo Platform SAS.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.exoplatform.faq.test;
+package org.exoplatform.faq.service.ws;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
@@ -39,16 +41,12 @@ import org.exoplatform.ws.frameworks.json.impl.JsonParserImpl;
 import org.exoplatform.ws.frameworks.json.value.JsonValue;
 
 /**
- * Created by The eXo Platform SAS
- * Author : quangpld
- *          quangpld@exoplatform.com
- * Oct 15, 2012  
+ * AbstractResourceTest.java <br />
+ * Provides <code>service</code> method to test rest service.
+ * @author <a href="http://hoatle.net">hoatle</a>
+ * @since Mar 3, 2010
  */
-public abstract class AbstractResourceTest extends FAQServiceTestCase {
-
-  public AbstractResourceTest() throws Exception {
-    super();
-  }
+public abstract class AbstractResourceTest extends AbstractServiceTest {
 
   /**
    * gets response with provided writer
@@ -210,4 +208,21 @@ public abstract class AbstractResourceTest extends FAQServiceTestCase {
 
     assertEquals("The response code of resource("+resourceUrl+") is not expected.)",statusCode, containerResponse.getStatus());
   }
+  /**
+   * Comare ExoSocialActivity with entity HashMap
+   * @param activity
+   * @param entity
+   */
+ /* protected void compareActivity(ExoSocialActivity activity, HashMap<String, Object> entity){
+    assertNotNull("entity must not be null", entity);
+    
+    assertEquals("activity.getId() must equal:", activity.getId(), entity.get("id"));
+    
+    assertEquals("activity.getTitle() must equal: " + activity.getTitle() == null ? "" :activity.getTitle(),
+                  activity.getTitle() == null ? "" : activity.getTitle(),
+                  entity.get("title"));
+
+  
+  }*/
+ 
 }

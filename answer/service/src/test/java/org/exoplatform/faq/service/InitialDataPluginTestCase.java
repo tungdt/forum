@@ -16,12 +16,11 @@
  */
 package org.exoplatform.faq.service;
 
-import org.exoplatform.commons.testing.AssertUtils;
-import org.exoplatform.commons.testing.Closure;
-import org.exoplatform.commons.testing.KernelUtils;
 import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.container.xml.InitParams;
-import org.exoplatform.faq.test.FAQServiceTestCase;
+import org.exoplatform.faq.base.AssertUtils;
+import org.exoplatform.faq.base.FAQServiceTestCase;
+import org.exoplatform.faq.base.KernelUtils;
 
 /**
  * Created by The eXo Platform SAS
@@ -29,11 +28,11 @@ import org.exoplatform.faq.test.FAQServiceTestCase;
  *          exo@exoplatform.com
  * Sep 1, 2009  
  */
-public class ITInitialDataPlugin extends FAQServiceTestCase {
+public abstract class InitialDataPluginTestCase extends FAQServiceTestCase {
 
   private static final String DATAZIP_LOCATION = "jar:/conf/faqdata.zip";
 
-  public ITInitialDataPlugin() throws Exception {
+  public InitialDataPluginTestCase() throws Exception {
     super();
     faq = (FAQService) KernelUtils.getService(FAQService.class);
     conf = (ConfigurationManager) KernelUtils.getService(ConfigurationManager.class);
@@ -79,5 +78,8 @@ public class ITInitialDataPlugin extends FAQServiceTestCase {
     assertFalse(plugin.importData(faq, conf));
 
   }
-
+  
+  public interface Closure {
+    void dothis();
+  }
 }

@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.faq.service.test;
+package org.exoplatform.faq.service.ws;
 
 import javax.ws.rs.core.MediaType;
 
 import org.exoplatform.faq.service.ws.FAQWebservice;
-import org.exoplatform.faq.test.AbstractResourceTest;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 
 /**
@@ -50,7 +49,7 @@ public class TestFAQWebService extends AbstractResourceTest {
   public void tearDown() throws Exception {
     super.tearDown();
 
-    unregistry(faqWebservice);
+    removeResource(faqWebservice.getClass());
   }
   
   public void testViewRss() throws Exception {

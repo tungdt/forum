@@ -965,6 +965,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
   }
 
   private Question getQuestion(Node questionNode) throws Exception {
+    if(questionNode == null) return null;
     Question question = new Question();
     PropertyReader reader = new PropertyReader(questionNode);
     question.setId(questionNode.getName());
@@ -1049,7 +1050,7 @@ public class JCRDataStorage implements DataStorage, FAQNodeTypes {
   public Question getQuestionById(String questionId) throws Exception {
     SessionProvider sessionProvider = CommonUtils.createSystemProvider();
     Node questionNode = getQuestionNode(sessionProvider, questionId);
-    return questionNode == null ? null : getQuestion(questionNode);
+    return getQuestion(questionNode);
   }
 
   private List<String> getViewableCategoryIds(SessionProvider sessionProvider) throws Exception {

@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.faq.service.test;
+package org.exoplatform.faq.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.exoplatform.faq.base.FAQServiceTestCase;
 import org.exoplatform.faq.service.FAQSetting;
 import org.exoplatform.faq.service.Utils;
-import org.exoplatform.faq.test.FAQServiceTestCase;
 import org.exoplatform.forum.common.UserHelper;
 
 /**

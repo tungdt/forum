@@ -19,8 +19,8 @@ package org.exoplatform.faq.service.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.exoplatform.faq.base.FAQServiceTestCase;
 import org.exoplatform.faq.service.FAQServiceUtils;
-import org.exoplatform.faq.test.FAQServiceTestCase;
 import org.exoplatform.forum.common.jcr.SessionManager;
 
 /**
@@ -50,11 +50,6 @@ public class TestFAQServiceUtils extends FAQServiceTestCase {
     List<String> list = new ArrayList<String>();
     list = FAQServiceUtils.getUserPermission(list.toArray(new String[] {}));
     assertEquals(0, list.size());
-  }
-  
-  public void testGetAllGroupAndMembershipOfUser() throws Exception {
-    assertEquals("[root]", FAQServiceUtils.getAllGroupAndMembershipOfUser("root").toString());
-    assertEquals("[demo]", FAQServiceUtils.getAllGroupAndMembershipOfUser("demo").toString());
   }
   
   public void testGetSessionManager() throws Exception {
