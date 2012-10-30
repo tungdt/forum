@@ -40,12 +40,6 @@ public abstract class KernelUtils {
     // hidden
   }
 
-  @SuppressWarnings("unchecked")
-  public static <T>T getService(Class<? extends T> clazz) {
-    ExoContainer container = ExoContainerContext.getCurrentContainer();
-    return (T) container.getComponentInstanceOfType(clazz);
-  }
-
   public static void addValueParam(InitParams params, String name, String value) {
     ValueParam param = new ValueParam();
     param.setName(name);

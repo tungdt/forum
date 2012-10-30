@@ -21,7 +21,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
-import org.exoplatform.faq.base.BaseTestCase;
+import org.exoplatform.faq.base.FAQServiceTestCase;
 import org.exoplatform.services.jcr.ext.app.SessionProviderService;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
@@ -45,13 +45,17 @@ import org.exoplatform.services.security.Identity;
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/rest/exo.faq.component.service.test.configuration.xml")
 })
 
-public abstract class AbstractServiceTest extends BaseTestCase {
+public abstract class AbstractServiceTest extends FAQServiceTestCase {
   protected static Log LOG = ExoLogger.getLogger(AbstractServiceTest.class.getName());
   protected SessionProvider sessionProvider;
   protected ProviderBinder providerBinder;
   protected ResourceBinder resourceBinder;
   protected RequestHandlerImpl requestHandler;
   private static SessionProviderService sessionProviderService;
+
+  public AbstractServiceTest() throws Exception {
+    super();
+  }
 
   public void setUp() throws Exception {
     super.setUp();
@@ -63,13 +67,12 @@ public abstract class AbstractServiceTest extends BaseTestCase {
     providerBinder = ProviderBinder.getInstance();
     ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providerBinder));
     resourceBinder.clear();
-    begin();
+    startSessionAs(USER_ROOT);
   }
 
   public void tearDown() throws Exception {
-    endSession();
     super.tearDown();
-    end();
+    endSession();
   }
 
   /**

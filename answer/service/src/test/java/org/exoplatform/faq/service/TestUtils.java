@@ -17,12 +17,10 @@
 package org.exoplatform.faq.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.exoplatform.faq.base.FAQServiceTestCase;
-import org.exoplatform.faq.service.FAQSetting;
-import org.exoplatform.faq.service.Utils;
-import org.exoplatform.forum.common.UserHelper;
+import junit.framework.TestCase;
 
 /**
  * Created by The eXo Platform SAS
@@ -30,19 +28,59 @@ import org.exoplatform.forum.common.UserHelper;
  *          quangpld@exoplatform.com
  * Oct 5, 2012  
  */
-public class TestUtils extends FAQServiceTestCase {
+public class TestUtils extends TestCase {
   
   public TestUtils() throws Exception {
     super();
   }
 
   public void testHasPermission() throws Exception {
-    List<String> listUsers = new ArrayList<String>();
-    listUsers.add("root");
-    listUsers.add("john");
-    assertTrue(Utils.hasPermission(UserHelper.getAllGroupAndMembershipOfUser("root"), listUsers));
-    assertTrue(Utils.hasPermission(UserHelper.getAllGroupAndMembershipOfUser("john"), listUsers));
-    assertFalse(Utils.hasPermission(UserHelper.getAllGroupAndMembershipOfUser("demo"), listUsers));
+    List<String> listOfUsers = new ArrayList<String>();
+
+    assertFalse(Utils.hasPermission(listOfUsers, listOfUsers));
+
+    listOfUsers.add("demo");
+    listOfUsers.add("member:/platform/users");
+    listOfUsers.add("*:/platform/newgroup");
+    listOfUsers.add("/platform/test");
+    
+    List<String> listPlugin = Arrays.asList(new String[]{});
+    assertFalse(Utils.hasPermission(listPlugin, listOfUsers));
+    
+    listPlugin = Arrays.asList(new String[]{" "});
+    assertFalse(Utils.hasPermission(listPlugin, listOfUsers));
+
+    listPlugin = Arrays.asList(new String[]{"demo", "/abc/zzz"});
+    assertTrue(Utils.hasPermission(listPlugin, listOfUsers));
+
+    listPlugin = Arrays.asList(new String[]{"marry", "/abc/zzz"});
+    assertFalse(Utils.hasPermission(listPlugin, listOfUsers));
+
+    listPlugin = Arrays.asList(new String[]{"marry", "member:/platform/users"});
+    assertTrue(Utils.hasPermission(listPlugin, listOfUsers));
+
+    listPlugin = Arrays.asList(new String[]{"marry", "*:/platform/users"});
+    assertTrue(Utils.hasPermission(listPlugin, listOfUsers));
+    
+    listPlugin = Arrays.asList(new String[]{"marry", "admin:/platform/users"});
+    assertFalse(Utils.hasPermission(listPlugin, listOfUsers));
+    
+    listPlugin = Arrays.asList(new String[]{"marry", "/platform/newgroup"});
+    assertTrue(Utils.hasPermission(listPlugin, listOfUsers));
+    
+    listPlugin = Arrays.asList(new String[]{"marry", "*:/platform/newgroup"});
+    assertTrue(Utils.hasPermission(listPlugin, listOfUsers));
+    
+    listPlugin = Arrays.asList(new String[]{"marry", "member:/platform/newgroup"});
+    assertTrue(Utils.hasPermission(listPlugin, listOfUsers));
+
+    listPlugin = Arrays.asList(new String[]{"marry", "*:/platform/test"});
+    assertTrue(Utils.hasPermission(listPlugin, listOfUsers));
+    
+    listPlugin = Arrays.asList(new String[]{"marry", "/platform/test"});
+    assertTrue(Utils.hasPermission(listPlugin, listOfUsers));
+
+    assertFalse(Utils.hasPermission(listPlugin, new ArrayList<String>()));
   }
   
   public void testGetTimeOfLastActivity() throws Exception {

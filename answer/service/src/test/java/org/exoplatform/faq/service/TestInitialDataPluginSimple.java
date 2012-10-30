@@ -58,11 +58,10 @@ public class TestInitialDataPluginSimple extends TestCase {
     assertTrue(plugin.isZip("toto.zip"));
     assertFalse(plugin.isZip("toto.xml"));
 
-    /*AssertUtils.assertException(new Closure() {
+    AssertUtils.assertException(new InitialDataPluginTestCase.Closure() {
       public void dothis() {
         plugin.isZip("toto.unsupported");
       }
-    });*/
+    });
   }
-
 }

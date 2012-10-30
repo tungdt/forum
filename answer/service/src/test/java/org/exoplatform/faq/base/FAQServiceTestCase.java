@@ -97,12 +97,12 @@ public abstract class FAQServiceTestCase extends BaseTestCase {
   }
 
   public void setUp() throws Exception {
+    begin();
     ConversationState conversionState = ConversationState.getCurrent();
     if(conversionState == null) {
       conversionState = new ConversationState(new Identity(USER_ROOT));
       ConversationState.setCurrent(conversionState);
     }
-    
     faqService_ = (FAQService) getService(FAQService.class);
     
     //
@@ -122,6 +122,12 @@ public abstract class FAQServiceTestCase extends BaseTestCase {
 
   public void tearDown() throws Exception {
     removeData();
+    end();
+  }
+  
+  @SuppressWarnings("unchecked")
+  public <T> T getService(Class<T> clazz) {
+    return (T) getContainer().getComponentInstanceOfType(clazz);
   }
   
   protected void defaultData() throws Exception {

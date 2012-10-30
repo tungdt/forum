@@ -48,6 +48,10 @@ import org.exoplatform.ws.frameworks.json.value.JsonValue;
  */
 public abstract class AbstractResourceTest extends AbstractServiceTest {
 
+  public AbstractResourceTest() throws Exception {
+    super();
+  }
+
   /**
    * gets response with provided writer
    * @param method

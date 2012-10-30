@@ -82,80 +82,8 @@ public class TestDataStorage extends FAQServiceTestCase {
     dataStorage = (DataStorage) getService(JCRDataStorage.class);
     //
     super.setUp();
-    
-    //
-    initializationMember();
-  }
-  
-  private boolean isGroup(GroupHandler groupHandler, String gr) {
-    try {
-      return (groupHandler.findGroupById(gr) != null);
-    } catch (Exception e) {
-      return false;
-    }
-  }
-  
-  private void initializationMember() throws Exception {
-    OrganizationService service = getService(OrganizationService.class);
-    try {
-      GroupHandler groupHandler = service.getGroupHandler();
-      if (!isGroup(groupHandler, "/exotest/users")) {
-        Group group = groupHandler.createGroupInstance();
-        group.setGroupName("exotest");
-        group.setLabel("Exo test");
-        group.setDescription("Exo Test");
-        // Save group
-        groupHandler.addChild(null, group, true);
-        
-        
-        Group groupChild = groupHandler.createGroupInstance();
-        groupChild.setGroupName("users");
-        groupChild.setLabel("Users");
-        groupChild.setDescription("Users");
-        groupHandler.addChild(group, groupChild, true);
-        
-        
-        
-        
-System.out.println("\n\n=============> " + groupChild.getId());
-        MembershipTypeHandler mTHandler = service.getMembershipTypeHandler();
-        group = service.getGroupHandler().findGroupById(groupChild.getId());
-        MembershipType mt = mTHandler.createMembershipTypeInstance();
-        mt.setName("member");
-        mt.setDescription("Description");
-        mt.setOwner(USER_ROOT);
-        mt = mTHandler.saveMembershipType(mt, true);
-        MembershipHandler mhandler = service.getMembershipHandler();
-        //
-        String users[] = new String[] { USER_DEMO, USER_JOHN, USER_ROOT };
-        UserHandler userHandler = service.getUserHandler();
-        for (int i = 0; i < users.length; i++) {
-          String username = users[i];
-          User user = userHandler.findUserByName(username);
-          if (user == null) {
-            user = userHandler.createUserInstance(username);
-            user.setEmail(username + "@localhost");
-            user.setFirstName(username);
-            user.setLastName(username);
-            user.setPassword("gtn");
-            userHandler.createUser(user, true);
-            user = userHandler.findUserByName(username);
-          }
-          //
-          
-          mhandler.linkMembership(user, group, mt, true);
-        }
-        
-      }
-      System.out.println("\n\n==============================> XXXX: " 
-      +UserHelper.getAllGroupAndMembershipOfUser(USER_ROOT) +"\n\n");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
   }
 
-  
   public void tearDown() throws Exception {
     super.tearDown();
   }

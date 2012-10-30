@@ -44,6 +44,7 @@ public class TestMultiLanguages extends FAQServiceTestCase {
   }
   
   public void tearDown() throws Exception {
+    super.tearDown();
   }
   
   public void testAddLanguage() throws Exception {

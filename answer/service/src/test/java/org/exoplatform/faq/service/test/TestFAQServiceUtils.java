@@ -35,6 +35,14 @@ public class TestFAQServiceUtils extends FAQServiceTestCase {
     super();
   }
   
+  public void setUp() throws Exception {
+    super.setUp();
+  }
+  
+  public void tearDown() throws Exception {
+    super.tearDown();
+  }
+  
   public void testIsGroupExpression() throws Exception {
     assertTrue(FAQServiceUtils.isGroupExpression("/element(*,exoAnswer)"));
     assertFalse(FAQServiceUtils.isGroupExpression("/element(*,exo:answer)"));

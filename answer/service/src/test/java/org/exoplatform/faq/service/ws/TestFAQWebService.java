@@ -36,7 +36,6 @@ public class TestFAQWebService extends AbstractResourceTest {
   private static FAQWebservice faqWebservice;
 
   public TestFAQWebService() throws Exception {
-    super();
   }
   
   public void setUp() throws Exception {

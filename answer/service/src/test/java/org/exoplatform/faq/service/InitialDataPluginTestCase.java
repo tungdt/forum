@@ -28,15 +28,10 @@ import org.exoplatform.faq.base.KernelUtils;
  *          exo@exoplatform.com
  * Sep 1, 2009  
  */
-public abstract class InitialDataPluginTestCase extends FAQServiceTestCase {
+
+public class InitialDataPluginTestCase extends FAQServiceTestCase {
 
   private static final String DATAZIP_LOCATION = "jar:/conf/faqdata.zip";
-
-  public InitialDataPluginTestCase() throws Exception {
-    super();
-    faq = (FAQService) KernelUtils.getService(FAQService.class);
-    conf = (ConfigurationManager) KernelUtils.getService(ConfigurationManager.class);
-  }
 
   FAQService           faq;
 
@@ -44,13 +39,24 @@ public abstract class InitialDataPluginTestCase extends FAQServiceTestCase {
 
   InitialDataPlugin    plugin;
 
+  public InitialDataPluginTestCase() throws Exception {
+    super();
+  }
+
   public void setUp() throws Exception {
+    begin();
+    faq = (FAQService) getService(FAQService.class);
+    conf = (ConfigurationManager)getService(ConfigurationManager.class);
     InitParams params = new InitParams();
     KernelUtils.addValueParam(params, "location", DATAZIP_LOCATION);
     KernelUtils.addValueParam(params, "forceXML", "true");
     plugin = new InitialDataPlugin(params);
   }
 
+  public void tearDown() throws Exception {
+    end();
+  }
+  
   public void testImportData() throws Exception {
     InitParams params = new InitParams();
     plugin = new InitialDataPlugin(params);

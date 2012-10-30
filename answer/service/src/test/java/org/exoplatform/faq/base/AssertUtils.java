@@ -161,9 +161,9 @@ public abstract class AssertUtils extends Assert {
   public static void assertException(Closure closure) {
     try {
       closure.dothis();
-      assertTrue(true);
-    } catch (Exception e) {
       assertTrue(false);
+    } catch (Exception e) {
+      assertTrue(true);
     }
   }
 }
