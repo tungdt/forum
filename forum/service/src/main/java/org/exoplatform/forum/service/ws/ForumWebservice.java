@@ -26,10 +26,9 @@ import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.service.ForumService;
-import org.exoplatform.forum.service.Post;
-import org.exoplatform.forum.service.Utils;
+import org.exoplatform.forum.service.*;
 import org.exoplatform.forum.service.filter.model.CategoryFilter;
+import org.exoplatform.forum.service.filter.model.ForumFilter;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.impl.RuntimeDelegateImpl;
@@ -242,6 +241,10 @@ public class ForumWebservice implements ResourceContainer {
                                @Context UriInfo uriInfo) throws Exception {
     try {
       List<CategoryFilter> categoryFilters = new ArrayList<CategoryFilter>();
+      List<CategoryFilter> categoryFiltersTemp = new ArrayList<CategoryFilter>();
+      List<ForumFilter> forumFiltersTemp = null;
+      List<ForumFilter> forumFilters =   new ArrayList<ForumFilter>();
+
       if(!Utils.isEmpty(forumName)) {
         ForumService forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
         String userName = getUserId(sc, uriInfo);
@@ -254,6 +257,39 @@ public class ForumWebservice implements ResourceContainer {
           }
         }
         categoryFilters = forumService.filterForumByName(forumName, userName, maxSize_);
+        boolean canAddNewThread = false;
+        boolean forumExists = false;
+
+        for (CategoryFilter categoryFilter : categoryFilters) {
+            forumFiltersTemp = new ArrayList<ForumFilter>();
+            forumFilters = categoryFilter.getForumFilters();
+            String[] strings = null;
+            for (ForumFilter forumFilter : forumFilters) {
+                Forum forum = forumService.getForum(categoryFilter.getCategoryId(),forumFilter.getForumId());
+                strings = forum.getCreateTopicRole();
+                if (strings == null || strings.length <= 0 || strings[0].equals(" ")) {
+                    break;
+                }
+                canAddNewThread = ForumServiceUtils.hasPermission(strings, userName);
+                if (!canAddNewThread) {
+                    if ((strings.length != 0) && (strings[0].length() > 1) ) {
+                        forumFiltersTemp.add(forumFilter);
+
+                    }
+
+                }
+            }
+            categoryFilter.getForumFilters().removeAll(forumFiltersTemp);
+            if (categoryFilter.getForumFilters().size()> 0) {
+                forumExists = true;
+            } else {
+                categoryFiltersTemp.add(categoryFilter);
+            }
+        }
+        categoryFilters.removeAll(categoryFiltersTemp);
+        if (!forumExists) {
+            categoryFilters = new ArrayList<CategoryFilter>();
+        }
         Collections.sort(categoryFilters, new Utils.CategoryNameComparator());
       }
       return Response.ok(categoryFilters, JSON_CONTENT_TYPE).cacheControl(cc).build();
